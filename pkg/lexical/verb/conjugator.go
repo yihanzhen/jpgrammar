@@ -17,5 +17,5 @@ type GodanVerbConjugator struct {
 }
 
 func (c *GodanVerbConjugator) Imperfective() (word.Word, error) {
-
+	return word.LastKanaToCol(c.verb.Word, 0)
 }
