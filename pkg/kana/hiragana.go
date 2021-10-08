@@ -47,6 +47,23 @@ func IsHiragana(r rune) bool {
 	return ok
 }
 
+func IsHiraganaStr(str string) bool {
+	for _, r := range str {
+		if !IsHiragana(r) {
+			return false
+		}
+	}
+	return true
+}
+
+func IsCol(r rune, col int) bool {
+	pos, ok := HiraganaMap[r]
+	if !ok {
+		return false
+	}
+	return pos[1] == col
+}
+
 func Col(r rune, col int) (rune, error) {
 	pos, ok := HiraganaMap[r]
 	if !ok {

@@ -3,73 +3,86 @@ package verb
 import (
 	"fmt"
 
+	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
 type Verb struct {
+	conjunctor.DefaultConjunctable
 	word.Word
-	forceGodanConj bool
+	forceTypeOneConj bool
 }
 
 type NewVerbOption int
 
 const (
-	ForceGodanConjugation NewVerbOption = iota
-	WriteHiraganaOnly
+	ForceTypeOneConjugation NewVerbOption = iota
+	WriteCanonical
 )
 
-func NewVerb(kanas, kanjis string, opts ...NewVerbOption) (Verb, error) {
-	if kanas == "" {
-		return Verb{}, fmt.Errorf("input kanas can't be empty")
-	}
-	lr := lastRune(kanas)
-	if lk := lastRune(kanjis); lr != lk {
-		return Verb{}, fmt.Errorf("last rune of kanas and kanjis must be the same, got %v and %v", lr, lk)
-	}
+func (v Verb) GetWordKind() wordkind.WordKind {
+	return wordkind.Verb
+}
 
-	kanas = trimLastRune(kanas)
-	kanjis = trimLastRune(kanjis)
+func (v Verb) CheckPrev(c *conjunctor.Conjunctor, prev conjunctor.Conjunctable) error {
+	return nil
+}
 
-	var writeOpts []word.WriteOption
-	var forceGodanConj bool
+func (v Verb) CheckNext(c *conjunctor.Conjunctor, next conjunctor.Conjunctable) error {
+	return nil
+}
+
+func (v Verb) OnConjunct(prev, next conjunctor.Conjunctable) ([]conjunctor.Conjunctable, error) {
+	return []conjunctor.Conjunctable{prev, v, next}, nil
+}
+
+func (v Verb) OnWrite(words []word.Word) []word.Word {
+	return append(words, v.Word)
+}
+
+func NewVerb(canonical, display string, opts ...NewVerbOption) (Verb, error) {
+	var forceTypeOneConj bool
 	for _, opt := range opts {
-		if opt == WriteHiraganaOnly {
-			writeOpts = append(writeOpts, word.HiraganaOnly)
+		if opt == WriteCanonical {
+			display = canonical
 		}
-		if opt == ForceGodanConjugation {
-			forceGodanConj = true
+		if opt == ForceTypeOneConjugation {
+			forceTypeOneConj = true
 		}
 	}
 
-	w, err := word.NewWord(kanas, kanjis, string([]rune{lr}), writeOpts...)
+	w, err := word.NewWord(canonical, display)
 	if err != nil {
 		return Verb{}, fmt.Errorf("NewVerb: %v", err)
 	}
+	if !w.CheckLastRuneCol(2) {
+		return Verb{}, fmt.Errorf("NewVerb: last rune of word is not in col 2")
+	}
 	v := Verb{
-		Word:           w,
-		forceGodanConj: forceGodanConj,
+		Word:             w,
+		forceTypeOneConj: forceTypeOneConj,
 	}
 	return v, nil
 }
 
 func (v Verb) GetConjugator() VerbConjugator {
-	if v.forceGodanConj {
-		return &GodanVerbConjugator{
+	if v.forceTypeOneConj {
+		return &TypeOneVerbConjugator{
 			verb: v,
 		}
 	}
-	if v.EndsWith("る") && v.
-	return &GodanVerbConjugator{
+	if !v.CheckLastRune('る') {
+		return &TypeOneVerbConjugator{
+			verb: v,
+		}
+	}
+	if !v.CheckRune(word.NthLastRune(1), word.IsCol(1)) && !v.CheckRune(word.NthLastRune(1), word.IsCol(3)) {
+		return &TypeOneVerbConjugator{
+			verb: v,
+		}
+	}
+	return &TypeTwoVerbConjugator{
 		verb: v,
 	}
-}
-
-func lastRune(str string) rune {
-	rs := []rune(str)
-	return rs[len(rs)-1]
-}
-
-func trimLastRune(str string) string {
-	rs := []rune(str)
-	return string(rs[0 : len(rs)-1])
 }

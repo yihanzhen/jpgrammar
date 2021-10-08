@@ -1,6 +1,10 @@
 package verb
 
-import "github.com/yihanzhen/jpgrammar/pkg/word"
+import (
+	"fmt"
+
+	"github.com/yihanzhen/jpgrammar/pkg/word"
+)
 
 type VerbConjugator interface {
 	Imperfective() (word.Word, error)
@@ -12,81 +16,122 @@ type VerbConjugator interface {
 	Imperative() (word.Word, error)
 }
 
-type GodanVerbConjugator struct {
+type TypeOneVerbConjugator struct {
 	verb Verb
 }
 
-func (c *GodanVerbConjugator) Imperfective() (word.Word, error) {
-	w, err := word.LastKanaToCol(c.verb.Word, 0)
+func (c *TypeOneVerbConjugator) Imperfective() (word.Word, error) {
+	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(0))
 	if err != nil {
-		return word.Word{}, err
+		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Imperfective: %v", err)
 	}
-
-	return word.LastKanaAToWa(w), nil
-}
-
-func (c *GodanVerbConjugator) Adverbial() (word.Word, error) {
-	return word.LastKanaToCol(c.verb.Word, 1)
-}
-
-func (c *GodanVerbConjugator) Attributive() (word.Word, error) {
-	return word.LastKanaToCol(c.verb.Word, 2)
-}
-
-func (c *GodanVerbConjugator) Terminated() (word.Word, error) {
-	return word.LastKanaToCol(c.verb.Word, 2)
-}
-
-func (c *GodanVerbConjugator) Hyperthetical() (word.Word, error) {
-	return word.LastKanaToCol(c.verb.Word, 3)
-}
-
-func (c *GodanVerbConjugator) Imperative() (word.Word, error) {
-	return word.LastKanaToCol(c.verb.Word, 4)
-}
-
-func (c *GodanVerbConjugator) Volitional() (word.Word, error) {
-	return word.LastKanaToCol(c.verb.Word, 4)
-}
-
-type IchidanConjugator struct {
-	verb Verb
-}
-
-func (c *IchidanConjugator) Imperfective() (word.Word, error) {
-	return word.TrimLastKana(c.verb.Word)
-}
-
-func (c *IchidanConjugator) Adverbial() (word.Word, error) {
-	return word.TrimLastKana(c.verb.Word)
-}
-
-func (c *IchidanConjugator) Attributive() (word.Word, error) {
-	return word.LastKanaToCol(c.verb.Word, 2)
-}
-
-func (c *IchidanConjugator) Terminated() (word.Word, error) {
-	return word.LastKanaToCol(c.verb.Word, 2)
-}
-
-func (c *IchidanConjugator) Hyperthetical() (word.Word, error) {
-	return word.LastKanaToCol(c.verb.Word, 3)
-}
-
-func (c *IchidanConjugator) Imperative() (word.Word, error) {
-	w, err := word.TrimLastKana(c.verb.Word)
+	w, err = w.ChangeLastRuneTo(word.AToWa)
 	if err != nil {
-		return word.Word{}, err
+		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Imperfective: %v", err)
 	}
-	word.AppendSuffix(w, "ろ")
 	return w, nil
 }
 
-func (c *IchidanConjugator) Volitional() (word.Word, error) {
-	w, err := word.TrimLastKana(c.verb.Word)
+func (c *TypeOneVerbConjugator) Adverbial() (word.Word, error) {
+	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(1))
 	if err != nil {
-		return word.Word{}, err
+		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Adverbial: %v", err)
 	}
-	word.AppendSuffix(w, "よう")
+	return w, nil
+}
+
+func (c *TypeOneVerbConjugator) Attributive() (word.Word, error) {
+	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(2))
+	if err != nil {
+		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Attributive: %v", err)
+	}
+	return w, nil
+}
+
+func (c *TypeOneVerbConjugator) Terminated() (word.Word, error) {
+	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(2))
+	if err != nil {
+		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Terminated: %v", err)
+	}
+	return w, nil
+}
+
+func (c *TypeOneVerbConjugator) Hyperthetical() (word.Word, error) {
+	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(3))
+	if err != nil {
+		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Hyperthetical: %v", err)
+	}
+	return w, nil
+}
+
+func (c *TypeOneVerbConjugator) Imperative() (word.Word, error) {
+	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(3))
+	if err != nil {
+		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Imperative: %v", err)
+	}
+	return w, nil
+}
+
+func (c *TypeOneVerbConjugator) Volitional() (word.Word, error) {
+	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(4))
+	if err != nil {
+		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Imperative: %v", err)
+	}
+	return w, nil
+}
+
+type TypeTwoVerbConjugator struct {
+	verb Verb
+}
+
+func (c *TypeTwoVerbConjugator) Imperfective() (word.Word, error) {
+	w, err := c.verb.Word.TrimLastRune()
+	if err != nil {
+		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Imperfective: %v", err)
+	}
+	return w, nil
+}
+
+func (c *TypeTwoVerbConjugator) Adverbial() (word.Word, error) {
+	w, err := c.verb.Word.TrimLastRune()
+	if err != nil {
+		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Adverbial: %v", err)
+	}
+	return w, nil
+}
+
+func (c *TypeTwoVerbConjugator) Attributive() (word.Word, error) {
+	return c.verb.Word, nil
+}
+
+func (c *TypeTwoVerbConjugator) Terminated() (word.Word, error) {
+	return c.verb.Word, nil
+}
+
+func (c *TypeTwoVerbConjugator) Hyperthetical() (word.Word, error) {
+	return c.verb.Word, nil
+}
+
+func (c *TypeTwoVerbConjugator) Imperative() (word.Word, error) {
+	w, err := c.verb.Word.TrimLastRune()
+	if err != nil {
+		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Imperative: %v", err)
+	}
+	w, err = w.Append("ろ")
+	if err != nil {
+		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Imperative: %v", err)
+	}
+	return w, nil
+}
+
+func (c *TypeTwoVerbConjugator) Volitional() (word.Word, error) {
+	w, err := c.verb.Word.TrimLastRune()
+	if err != nil {
+		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Volitional: %v", err)
+	}
+	w, err = w.Append("よう")
+	if err != nil {
+		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Volitional: %v", err)
+	}
 	return w, nil
 }
