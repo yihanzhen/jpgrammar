@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
+	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/verb"
 )
 
@@ -12,8 +13,15 @@ type Vocabulary struct {
 	errors []error
 }
 
+func NewVocabulary() *Vocabulary {
+	return &Vocabulary{
+		dict: map[string]Word{},
+	}
+}
+
 type Word interface {
 	conjunctor.Conjunctable
+	GetExtender() extender.Extender
 }
 
 func (v *Vocabulary) AddVerb(canonical, display string, opts ...verb.NewVerbOption) {

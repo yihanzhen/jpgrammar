@@ -1,6 +1,10 @@
 package extender
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
+)
 
 type Extender interface {
 	AsSubject() Extender
@@ -16,7 +20,7 @@ type Extender interface {
 	AsTopic() Extender
 	Likewise() Extender
 
-	Negated() Extender
+	Negated(*conjunctor.Conjunctor) (Extender, error)
 	Potentially() Extender
 	Politely() Extender
 	Desirably() Extender
@@ -123,12 +127,8 @@ func (u UnimplementedExtender) Likewise() Extender {
 	return u
 }
 
-func (u UnimplementedExtender) Negated() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
+func (u UnimplementedExtender) Negated(*conjunctor.Conjunctor) (Extender, error) {
+	return nil, fmt.Errorf("Unimplemented: Negated()")
 }
 
 func (u UnimplementedExtender) Potentially() Extender {

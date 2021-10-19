@@ -9,8 +9,7 @@ import (
 )
 
 type Conjunctable interface {
-	CheckPrev(*Conjunctor, Conjunctable) error
-	CheckNext(*Conjunctor, Conjunctable) error
+	OnAppend(prev, next Conjunctable) ([]Conjunctable, error)
 	OnConjunct(prev, next Conjunctable) ([]Conjunctable, error)
 	OnWrite([]word.Word) []word.Word
 
@@ -20,12 +19,8 @@ type Conjunctable interface {
 
 type DefaultConjunctable struct{}
 
-func (d DefaultConjunctable) CheckPrev(*Conjunctor, Conjunctable) error {
-	return nil
-}
-
-func (d DefaultConjunctable) CheckNext(*Conjunctor, Conjunctable) error {
-	return nil
+func (d DefaultConjunctable) OnAppend(prev, next Conjunctable) ([]Conjunctable, error) {
+	return nil, nil
 }
 
 func (d DefaultConjunctable) OnConjunct(prev, next Conjunctable) ([]Conjunctable, error) {
@@ -48,12 +43,8 @@ type SentenceStartType struct {
 	DefaultConjunctable
 }
 
-func (s SentenceStartType) CheckPrev(c *Conjunctor, p Conjunctable) error {
-	return fmt.Errorf("SentenceStart.CheckPrev: should never be called for SentenceStart")
-}
-
-func (s SentenceStartType) CheckNext(c *Conjunctor, p Conjunctable) error {
-	return nil
+func (s SentenceStartType) OnAppend(prev, next Conjunctable) ([]Conjunctable, error) {
+	return nil, fmt.Errorf("SentenceStart.OnAppend: should never be called for SentenceStart")
 }
 
 func (s SentenceStartType) OnWrite(words []word.Word) []word.Word {
@@ -68,12 +59,8 @@ type SentenceEndType struct {
 	DefaultConjunctable
 }
 
-func (s SentenceEndType) CheckPrev(c *Conjunctor, p Conjunctable) error {
-	return nil
-}
-
-func (s SentenceEndType) CheckNext(c *Conjunctor, p Conjunctable) error {
-	return fmt.Errorf("SentenceEnd.CheckNext: should never be called for SentenceEnd")
+func (s SentenceEndType) OnAppend(prev, next Conjunctable) ([]Conjunctable, error) {
+	return nil, fmt.Errorf("SentenceEnd.OnAppend: should never be called for SentenceStart")
 }
 
 func (s SentenceEndType) OnWrite(words []word.Word) []word.Word {

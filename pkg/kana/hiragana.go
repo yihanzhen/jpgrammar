@@ -77,8 +77,11 @@ func Col(r rune, col int) (rune, error) {
 	if pos[1] < 0 || pos[1] >= len(HiraganaTable[0]) {
 		return ' ', fmt.Errorf("internal: invalid index %v for HiraganaTable", pos)
 	}
+	if col < 0 || col >= len(HiraganaTable[0]) {
+		return ' ', fmt.Errorf("Col: invalid col, got %v, want >= 0 and < 5", col)
+	}
 
-	rt := HiraganaTable[pos[0]][pos[1]]
+	rt := HiraganaTable[pos[0]][col]
 	if rt == ' ' {
 		return ' ', fmt.Errorf("invalid rune lookup: %v in HiraganaTable is empty", pos)
 	}

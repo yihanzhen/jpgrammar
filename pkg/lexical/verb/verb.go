@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
+	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
@@ -39,6 +40,10 @@ func (v Verb) OnConjunct(prev, next conjunctor.Conjunctable) ([]conjunctor.Conju
 
 func (v Verb) OnWrite(words []word.Word) []word.Word {
 	return append(words, v.Word)
+}
+
+func (v Verb) GetExtender() extender.Extender {
+	return &VerbExtender{}
 }
 
 func NewVerb(canonical, display string, opts ...NewVerbOption) (Verb, error) {

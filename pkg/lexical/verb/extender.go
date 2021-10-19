@@ -10,6 +10,6 @@ type VerbExtender struct {
 	conj *conjunctor.Conjunctor
 }
 
-func (v *VerbExtender) Politely() *VerbExtender {
+func (v *VerbExtender) Politely() extender.Extender {
 	return v
 }
