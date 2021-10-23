@@ -2,6 +2,7 @@ package word
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/yihanzhen/jpgrammar/pkg/kana"
 )
@@ -30,4 +31,12 @@ func NewWord(canonical, display string) (Word, error) {
 
 func (w Word) Write() string {
 	return w.display
+}
+
+func MustWord(canonical, display string) Word {
+	w, err := NewWord(canonical, display)
+	if err != nil {
+		log.Fatalf("mustWord: unable to create new word: %v", err)
+	}
+	return w
 }

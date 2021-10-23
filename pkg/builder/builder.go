@@ -1,8 +1,6 @@
 package builder
 
 import (
-	"fmt"
-
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/diag"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
@@ -18,20 +16,11 @@ type Builder struct {
 
 func NewBuilder() *Builder {
 	d := &diag.Diag{}
-	e := extender.UnimplementedExtender{
-		SaveError: func(err error) {
-			d.SaveError(err)
-		},
-		GetError: func() error {
-			if !d.HasErrors() {
-				return nil
-			}
-			return fmt.Errorf("errors: %v", d.GetErrors())
-		},
-	}
+	c := conjunctor.NewConjunctor()
+	e := extender.NewExtenderWrapper(d, c)
 	b := Builder{
 		Vocab:      vocabulary.NewVocabulary(),
-		Conjunctor: conjunctor.NewConjugator(),
+		Conjunctor: c,
 		Extender:   e,
 		Diag:       d,
 	}
@@ -39,11 +28,20 @@ func NewBuilder() *Builder {
 }
 
 func (b *Builder) Append(text string) *Builder {
+	if b.Diag.HasErrors() {
+		return b
+	}
 	w, err := b.Vocab.GetWord(text)
 	if err != nil {
 		b.Diag.SaveError(err)
 		return b
 	}
-	b.Conjunctor.Conjunct(w)
+	if err := b.Conjunctor.Append(w); err != nil {
+		b.Diag.SaveError(err)
+	}
 	return b
+}
+
+func (b *Builder) Build() (string, error) {
+	return b.Conjunctor.Write()
 }

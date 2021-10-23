@@ -7,221 +7,39 @@ import (
 )
 
 type Extender interface {
-	AsSubject() Extender
-	AsObject() Extender
-	AsDirection() Extender
-	AsVenue() Extender
-	AsTimestamp() Extender
-	AsLocation() Extender
-	AsApproach() Extender
-	AsStart() Extender
-	AsEnd() Extender
+	// AsSubject(*conjunctor.Conjunctor) (Extender, error)
+	// AsObject(*conjunctor.Conjunctor) (Extender, error)
+	// AsDirection(*conjunctor.Conjunctor) (Extender, error)
+	// AsVenue(*conjunctor.Conjunctor) (Extender, error)
+	// AsTimestamp(*conjunctor.Conjunctor) (Extender, error)
+	// AsLocation(*conjunctor.Conjunctor) (Extender, error)
+	// AsApproach(*conjunctor.Conjunctor) (Extender, error)
+	// AsStart(*conjunctor.Conjunctor) (Extender, error)
+	// AsEnd(*conjunctor.Conjunctor) (Extender, error)
 
-	AsTopic() Extender
-	Likewise() Extender
+	Asserted(*conjunctor.Conjunctor) (Extender, error)
 
 	Negated(*conjunctor.Conjunctor) (Extender, error)
-	Potentially() Extender
-	Politely() Extender
-	Desirably() Extender
-	Purposefully() Extender
-	Attributing() Extender
-	Terminate() Extender
-	Pause() Extender
-	Statified() Extender
-	Completed() Extender
-	Imperatively() Extender
-	Volitionally() Extender
-	Forbade() Extender
+	// Potentially(*conjunctor.Conjunctor) (Extender, error)
+	// Politely(*conjunctor.Conjunctor) (Extender, error)
+	// Desirably(*conjunctor.Conjunctor) (Extender, error)
+	// Purposefully(*conjunctor.Conjunctor) (Extender, error)
+	// Attributing(*conjunctor.Conjunctor) (Extender, error)
+	// Terminate(*conjunctor.Conjunctor) (Extender, error)
+	// Pause(*conjunctor.Conjunctor) (Extender, error)
+	// Statified(*conjunctor.Conjunctor) (Extender, error)
+	// Completed(*conjunctor.Conjunctor) (Extender, error)
+	// Imperatively(*conjunctor.Conjunctor) (Extender, error)
+	// Volitionally(*conjunctor.Conjunctor) (Extender, error)
+	// Forbade(*conjunctor.Conjunctor) (Extender, error)
 }
 
-type UnimplementedExtender struct {
-	SaveError func(err error)
-	GetError  func() error
-}
+type UnimplementedExtender struct{}
 
-func (u UnimplementedExtender) AsSubject() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) AsObject() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-func (u UnimplementedExtender) AsDirection() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) AsVenue() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) AsTimestamp() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) AsLocation() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) AsApproach() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) AsStart() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) AsEnd() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) AsTopic() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) Likewise() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
+func (u UnimplementedExtender) Asserted(*conjunctor.Conjunctor) (Extender, error) {
+	return nil, fmt.Errorf("Unimplemented: Asserted()")
 }
 
 func (u UnimplementedExtender) Negated(*conjunctor.Conjunctor) (Extender, error) {
 	return nil, fmt.Errorf("Unimplemented: Negated()")
-}
-
-func (u UnimplementedExtender) Potentially() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-func (u UnimplementedExtender) Politely() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) Desirably() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) Purposefully() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) Attributing() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) Terminate() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) Pause() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) Statified() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) Completed() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) Imperatively() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) Volitionally() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
-}
-
-func (u UnimplementedExtender) Forbade() Extender {
-	if u.GetError() != nil {
-		return u
-	}
-	u.SaveError(fmt.Errorf("Unimplemented: AsSubject()"))
-	return u
 }

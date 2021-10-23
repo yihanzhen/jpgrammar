@@ -3,63 +3,79 @@ package conjunctor
 import (
 	"fmt"
 
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugationkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
+type Conjunctable interface {
+	OnAppend(conj *Conjunctor) error
+	OnWrite(Conjunctable, []word.Word) ([]word.Word, error)
+}
+
 type Conjunctor struct {
-	parts []Conjunctable
-	pos   int
-	err   error
+	parts           []Conjunctable
+	wordKind        wordkind.WordKind
+	conjugationKind conjugationkind.ConjugationKind
 }
 
-func NewConjugator() *Conjunctor {
-	return &Conjunctor{
-		parts: []Conjunctable{SentenceStart, SentenceEnd},
-		pos:   1,
-	}
+func NewConjunctor() *Conjunctor {
+	return &Conjunctor{}
 }
 
-func (c *Conjunctor) Write() string {
+func (c *Conjunctor) Write() (string, error) {
 	var words []word.Word
 	var res string
-	for _, part := range c.parts {
-		words = part.OnWrite(words)
+	for i, part := range c.parts {
+		var p Conjunctable
+		if i != 0 {
+			p = c.parts[i-1]
+		}
+		w, err := part.OnWrite(p, words)
+		if err != nil {
+			return "", fmt.Errorf("Conjunctor.Write: %v", err)
+		}
+		words = w
 	}
 	for _, w := range words {
 		res = res + w.Write()
 	}
-	return res
+	return res, nil
 }
 
-func (c *Conjunctor) GetHead() Conjunctable {
-	return c.parts[c.pos]
-}
-
-func (c *Conjunctor) MoveHead(ind int) {
-	c.pos = ind
-}
-
-func (c *Conjunctor) Conjunct(part Conjunctable) {
-	if c.err != nil {
-		return
+func (c *Conjunctor) RemoveHead() error {
+	if len(c.parts) <= 1 {
+		return fmt.Errorf("RemoveHead: nothing to remove")
 	}
-	if c.pos <= 0 || c.pos >= len(c.parts)-1 {
-		c.err = fmt.Errorf("invalid pos, got %v, want [1, %v)", c.pos, len(c.parts)-1)
-		return
-	}
-	prev := c.parts[c.pos-1]
-	next := c.parts[c.pos]
-	conjuncted, err := part.OnConjunct(prev, next)
-	if err != nil {
-		c.err = fmt.Errorf("Conjunctor.Conjunct: %v", err)
-	}
-	var parts []Conjunctable
-	parts = append(parts, c.parts[:c.pos-1]...)
-	parts = append(parts, conjuncted...)
-	parts = append(parts, c.parts[c.pos:]...)
-	c.parts = parts
+	c.parts = c.parts[0 : len(c.parts)-1]
+	return nil
 }
 
-func (c *Conjunctor) GetError() error {
-	return c.err
+func (c *Conjunctor) Insert(part Conjunctable) {
+	c.parts = append(c.parts, part)
+}
+
+func (c *Conjunctor) GetWordKind() wordkind.WordKind {
+	return c.wordKind
+}
+
+func (c *Conjunctor) UpdateWordKind(wk wordkind.WordKind) {
+	c.wordKind = wk
+}
+
+func (c *Conjunctor) UpdateConjugationKind(ck conjugationkind.ConjugationKind) {
+	c.conjugationKind = ck
+}
+
+func (c *Conjunctor) GetConjugationKind() conjugationkind.ConjugationKind {
+	return c.conjugationKind
+}
+
+func (c *Conjunctor) Append(parts ...Conjunctable) error {
+	for _, p := range parts {
+		if err := p.OnAppend(c); err != nil {
+			return fmt.Errorf("Conjunctor.Append: %v", err)
+		}
+	}
+	return nil
 }

@@ -6,14 +6,35 @@ import (
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
-type VerbConjugator interface {
+type verbConjugator interface {
 	Imperfective() (word.Word, error)
-	Adverbial() (word.Word, error)
+	Conjunctive() (word.Word, error)
 	Attributive() (word.Word, error)
-	Terminated() (word.Word, error)
-	Hyperthetical() (word.Word, error)
+	Terminal() (word.Word, error)
+	Conditional() (word.Word, error)
 	Volitional() (word.Word, error)
 	Imperative() (word.Word, error)
+}
+
+func (v Verb) getConjugator() verbConjugator {
+	if v.forceTypeOneConj {
+		return &TypeOneVerbConjugator{
+			verb: v,
+		}
+	}
+	if !v.CheckLastRune('る') {
+		return &TypeOneVerbConjugator{
+			verb: v,
+		}
+	}
+	if !v.CheckRune(word.NthLastRune(1), word.IsCol(1)) && !v.CheckRune(word.NthLastRune(1), word.IsCol(3)) {
+		return &TypeOneVerbConjugator{
+			verb: v,
+		}
+	}
+	return &TypeTwoVerbConjugator{
+		verb: v,
+	}
 }
 
 type TypeOneVerbConjugator struct {
@@ -32,7 +53,7 @@ func (c *TypeOneVerbConjugator) Imperfective() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeOneVerbConjugator) Adverbial() (word.Word, error) {
+func (c *TypeOneVerbConjugator) Conjunctive() (word.Word, error) {
 	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(1))
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Adverbial: %v", err)
@@ -48,7 +69,7 @@ func (c *TypeOneVerbConjugator) Attributive() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeOneVerbConjugator) Terminated() (word.Word, error) {
+func (c *TypeOneVerbConjugator) Terminal() (word.Word, error) {
 	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(2))
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Terminated: %v", err)
@@ -56,7 +77,7 @@ func (c *TypeOneVerbConjugator) Terminated() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeOneVerbConjugator) Hyperthetical() (word.Word, error) {
+func (c *TypeOneVerbConjugator) Conditional() (word.Word, error) {
 	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(3))
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Hyperthetical: %v", err)
@@ -92,7 +113,7 @@ func (c *TypeTwoVerbConjugator) Imperfective() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeTwoVerbConjugator) Adverbial() (word.Word, error) {
+func (c *TypeTwoVerbConjugator) Conjunctive() (word.Word, error) {
 	w, err := c.verb.Word.TrimLastRune()
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Adverbial: %v", err)
@@ -104,11 +125,11 @@ func (c *TypeTwoVerbConjugator) Attributive() (word.Word, error) {
 	return c.verb.Word, nil
 }
 
-func (c *TypeTwoVerbConjugator) Terminated() (word.Word, error) {
+func (c *TypeTwoVerbConjugator) Terminal() (word.Word, error) {
 	return c.verb.Word, nil
 }
 
-func (c *TypeTwoVerbConjugator) Hyperthetical() (word.Word, error) {
+func (c *TypeTwoVerbConjugator) Conditional() (word.Word, error) {
 	return c.verb.Word, nil
 }
 

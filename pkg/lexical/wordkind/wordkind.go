@@ -8,5 +8,6 @@ const (
 	Noun
 	Adjective
 	AdjNoun
+	AuxVerb
 	Particle
 )

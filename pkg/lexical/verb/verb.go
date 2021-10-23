@@ -5,13 +5,14 @@ import (
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugationkind"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
 type Verb struct {
-	conjunctor.DefaultConjunctable
 	word.Word
+	extender.UnimplementedExtender
 	forceTypeOneConj bool
 }
 
@@ -21,30 +22,6 @@ const (
 	ForceTypeOneConjugation NewVerbOption = iota
 	WriteCanonical
 )
-
-func (v Verb) GetWordKind() wordkind.WordKind {
-	return wordkind.Verb
-}
-
-func (v Verb) CheckPrev(c *conjunctor.Conjunctor, prev conjunctor.Conjunctable) error {
-	return nil
-}
-
-func (v Verb) CheckNext(c *conjunctor.Conjunctor, next conjunctor.Conjunctable) error {
-	return nil
-}
-
-func (v Verb) OnConjunct(prev, next conjunctor.Conjunctable) ([]conjunctor.Conjunctable, error) {
-	return []conjunctor.Conjunctable{prev, v, next}, nil
-}
-
-func (v Verb) OnWrite(words []word.Word) []word.Word {
-	return append(words, v.Word)
-}
-
-func (v Verb) GetExtender() extender.Extender {
-	return &VerbExtender{}
-}
 
 func NewVerb(canonical, display string, opts ...NewVerbOption) (Verb, error) {
 	var forceTypeOneConj bool
@@ -71,23 +48,34 @@ func NewVerb(canonical, display string, opts ...NewVerbOption) (Verb, error) {
 	return v, nil
 }
 
-func (v Verb) GetConjugator() VerbConjugator {
-	if v.forceTypeOneConj {
-		return &TypeOneVerbConjugator{
-			verb: v,
-		}
+func (v Verb) OnAppend(c *conjunctor.Conjunctor) error {
+	if c.GetWordKind() != wordkind.Particle {
+		return fmt.Errorf("Verb.OnAppend: cannot conjunct verb to wordkind: %v", c.GetWordKind())
 	}
-	if !v.CheckLastRune('る') {
-		return &TypeOneVerbConjugator{
-			verb: v,
-		}
+	c.UpdateWordKind(wordkind.Verb)
+	c.Insert(v)
+	return nil
+}
+
+func (v Verb) OnWrite(_ conjunctor.Conjunctable, words []word.Word) ([]word.Word, error) {
+	return append(words, v.Word), nil
+}
+
+func (v Verb) Conjugate(ck conjugationkind.ConjugationKind) (word.Word, error) {
+	conj := v.getConjugator()
+	switch ck {
+	case conjugationkind.Imperfective:
+		return conj.Imperfective()
+	case conjugationkind.Conjunctive:
+		return conj.Conjunctive()
+	case conjugationkind.Attributive:
+		return conj.Attributive()
+	case conjugationkind.Terminal:
+		return conj.Terminal()
+	case conjugationkind.Conditional:
+		return conj.Conditional()
+	case conjugationkind.Volitional:
+		return conj.Volitional()
 	}
-	if !v.CheckRune(word.NthLastRune(1), word.IsCol(1)) && !v.CheckRune(word.NthLastRune(1), word.IsCol(3)) {
-		return &TypeOneVerbConjugator{
-			verb: v,
-		}
-	}
-	return &TypeTwoVerbConjugator{
-		verb: v,
-	}
+	return word.Word{}, fmt.Errorf("Verb.Conjugate: conjugationKind not Conjugatable: %v", ck)
 }

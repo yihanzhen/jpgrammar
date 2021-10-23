@@ -21,7 +21,7 @@ func NewVocabulary() *Vocabulary {
 
 type Word interface {
 	conjunctor.Conjunctable
-	GetExtender() extender.Extender
+	extender.Extender
 }
 
 func (v *Vocabulary) AddVerb(canonical, display string, opts ...verb.NewVerbOption) {
