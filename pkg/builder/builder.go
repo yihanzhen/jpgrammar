@@ -5,13 +5,14 @@ import (
 	"github.com/yihanzhen/jpgrammar/pkg/builder/diag"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/vocabulary"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/particle"
 )
 
 type Builder struct {
 	Vocab      *vocabulary.Vocabulary
 	Conjunctor *conjunctor.Conjunctor
-	Extender   *extender.ExtenderWrapper
 	Diag       *diag.Diag
+	*extender.ExtenderWrapper
 }
 
 func NewBuilder() *Builder {
@@ -19,10 +20,10 @@ func NewBuilder() *Builder {
 	c := conjunctor.NewConjunctor()
 	e := extender.NewExtenderWrapper(d, c)
 	b := Builder{
-		Vocab:      vocabulary.NewVocabulary(),
-		Conjunctor: c,
-		Extender:   e,
-		Diag:       d,
+		Vocab:           vocabulary.NewVocabulary(),
+		Conjunctor:      c,
+		ExtenderWrapper: e,
+		Diag:            d,
 	}
 	return &b
 }
@@ -37,6 +38,17 @@ func (b *Builder) Append(text string) *Builder {
 		return b
 	}
 	if err := b.Conjunctor.Append(w); err != nil {
+		b.Diag.SaveError(err)
+	}
+	b.ExtenderWrapper.Extender = w
+	return b
+}
+
+func (b *Builder) AppendParticle(p particle.Particle) *Builder {
+	if b.Diag.HasErrors() {
+		return b
+	}
+	if err := b.Conjunctor.Append(p); err != nil {
 		b.Diag.SaveError(err)
 	}
 	return b

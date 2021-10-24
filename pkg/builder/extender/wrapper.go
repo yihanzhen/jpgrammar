@@ -25,6 +25,12 @@ func (w *ExtenderWrapper) Negated() *ExtenderWrapper {
 	})
 }
 
+func (w *ExtenderWrapper) Asserted() *ExtenderWrapper {
+	return w.wrapExtenderFunc(func() (Extender, error) {
+		return w.Extender.Asserted(w.Conjunctor)
+	})
+}
+
 func (w *ExtenderWrapper) wrapExtenderFunc(f func() (Extender, error)) *ExtenderWrapper {
 	if w.Diag.HasErrors() {
 		return w

@@ -5,6 +5,7 @@ import (
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/noun"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/verb"
 )
 
@@ -43,7 +44,21 @@ func (v *Vocabulary) AddVerb(canonical, display string, opts ...verb.NewVerbOpti
 }
 
 func (v *Vocabulary) AddNoun(canonical, display string) {
-
+	n, err := noun.NewNoun(canonical, display)
+	if err != nil {
+		v.errors = append(v.errors, fmt.Errorf("AddVerb: %v", err))
+		return
+	}
+	if _, ok := v.dict[canonical]; ok {
+		v.errors = append(v.errors, fmt.Errorf("AddVerb: canonical %q already exists", canonical))
+		return
+	}
+	if _, ok := v.dict[display]; ok {
+		v.errors = append(v.errors, fmt.Errorf("AddVerb: display %q already exists", display))
+		return
+	}
+	v.dict[canonical] = n
+	v.dict[display] = n
 }
 
 func (v *Vocabulary) GetWord(str string) (Word, error) {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/auxverb"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugationkind"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
@@ -13,6 +14,17 @@ import (
 type Noun struct {
 	word.Word
 	extender.UnimplementedExtender
+}
+
+func NewNoun(canonical, display string) (Noun, error) {
+	w, err := word.NewWord(canonical, display)
+	if err != nil {
+		return Noun{}, fmt.Errorf("NewNoun: %v", err)
+	}
+	n := Noun{
+		Word: w,
+	}
+	return n, nil
 }
 
 func (n Noun) OnAppend(conj *conjunctor.Conjunctor) error {
@@ -59,4 +71,12 @@ func (n Noun) OnAppend(conj *conjunctor.Conjunctor) error {
 
 func (n Noun) OnWrite(_ conjunctor.Conjunctable, words []word.Word) ([]word.Word, error) {
 	return append(words, n.Word), nil
+}
+
+func (n Noun) Asserted(conj *conjunctor.Conjunctor) (extender.Extender, error) {
+	pa := auxverb.PoliteAssertor{}
+	if err := conj.Append(pa); err != nil {
+		return nil, fmt.Errorf("Noun.Asserted: %v", err)
+	}
+	return pa, nil
 }
