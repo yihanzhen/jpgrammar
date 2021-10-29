@@ -3,21 +3,41 @@ package verb
 import (
 	"fmt"
 
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugationkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
+func (v Verb) Conjugate(ck conjugationkind.ConjugationKind) (word.Word, error) {
+	conj := v.getConjugator()
+	switch ck {
+	case conjugationkind.Imperfective:
+		return conj.imperfective()
+	case conjugationkind.Conjunctive:
+		return conj.conjunctive()
+	case conjugationkind.Attributive:
+		return conj.attributive()
+	case conjugationkind.Terminal:
+		return conj.terminal()
+	case conjugationkind.Conditional:
+		return conj.conditional()
+	case conjugationkind.Volitional:
+		return conj.volitional()
+	}
+	return word.Word{}, fmt.Errorf("Verb.Conjugate: conjugationKind not Conjugatable: %v", ck)
+}
+
 type verbConjugator interface {
-	Imperfective() (word.Word, error)
-	Conjunctive() (word.Word, error)
-	Attributive() (word.Word, error)
-	Terminal() (word.Word, error)
-	Conditional() (word.Word, error)
-	Volitional() (word.Word, error)
-	Imperative() (word.Word, error)
+	imperfective() (word.Word, error)
+	conjunctive() (word.Word, error)
+	attributive() (word.Word, error)
+	terminal() (word.Word, error)
+	conditional() (word.Word, error)
+	volitional() (word.Word, error)
+	imperative() (word.Word, error)
 }
 
 func (v Verb) getConjugator() verbConjugator {
-	if v.forceTypeOneConj {
+	if v.forceConjTypeOne {
 		return &TypeOneVerbConjugator{
 			verb: v,
 		}
@@ -41,7 +61,7 @@ type TypeOneVerbConjugator struct {
 	verb Verb
 }
 
-func (c *TypeOneVerbConjugator) Imperfective() (word.Word, error) {
+func (c *TypeOneVerbConjugator) imperfective() (word.Word, error) {
 	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(0))
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Imperfective: %v", err)
@@ -53,7 +73,7 @@ func (c *TypeOneVerbConjugator) Imperfective() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeOneVerbConjugator) Conjunctive() (word.Word, error) {
+func (c *TypeOneVerbConjugator) conjunctive() (word.Word, error) {
 	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(1))
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Adverbial: %v", err)
@@ -61,7 +81,7 @@ func (c *TypeOneVerbConjugator) Conjunctive() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeOneVerbConjugator) Attributive() (word.Word, error) {
+func (c *TypeOneVerbConjugator) attributive() (word.Word, error) {
 	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(2))
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Attributive: %v", err)
@@ -69,7 +89,7 @@ func (c *TypeOneVerbConjugator) Attributive() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeOneVerbConjugator) Terminal() (word.Word, error) {
+func (c *TypeOneVerbConjugator) terminal() (word.Word, error) {
 	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(2))
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Terminated: %v", err)
@@ -77,7 +97,7 @@ func (c *TypeOneVerbConjugator) Terminal() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeOneVerbConjugator) Conditional() (word.Word, error) {
+func (c *TypeOneVerbConjugator) conditional() (word.Word, error) {
 	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(3))
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Hyperthetical: %v", err)
@@ -85,7 +105,7 @@ func (c *TypeOneVerbConjugator) Conditional() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeOneVerbConjugator) Imperative() (word.Word, error) {
+func (c *TypeOneVerbConjugator) imperative() (word.Word, error) {
 	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(3))
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Imperative: %v", err)
@@ -93,7 +113,7 @@ func (c *TypeOneVerbConjugator) Imperative() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeOneVerbConjugator) Volitional() (word.Word, error) {
+func (c *TypeOneVerbConjugator) volitional() (word.Word, error) {
 	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(4))
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Imperative: %v", err)
@@ -105,7 +125,7 @@ type TypeTwoVerbConjugator struct {
 	verb Verb
 }
 
-func (c *TypeTwoVerbConjugator) Imperfective() (word.Word, error) {
+func (c *TypeTwoVerbConjugator) imperfective() (word.Word, error) {
 	w, err := c.verb.Word.TrimLastRune()
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Imperfective: %v", err)
@@ -113,7 +133,7 @@ func (c *TypeTwoVerbConjugator) Imperfective() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeTwoVerbConjugator) Conjunctive() (word.Word, error) {
+func (c *TypeTwoVerbConjugator) conjunctive() (word.Word, error) {
 	w, err := c.verb.Word.TrimLastRune()
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Adverbial: %v", err)
@@ -121,19 +141,19 @@ func (c *TypeTwoVerbConjugator) Conjunctive() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeTwoVerbConjugator) Attributive() (word.Word, error) {
+func (c *TypeTwoVerbConjugator) attributive() (word.Word, error) {
 	return c.verb.Word, nil
 }
 
-func (c *TypeTwoVerbConjugator) Terminal() (word.Word, error) {
+func (c *TypeTwoVerbConjugator) terminal() (word.Word, error) {
 	return c.verb.Word, nil
 }
 
-func (c *TypeTwoVerbConjugator) Conditional() (word.Word, error) {
+func (c *TypeTwoVerbConjugator) conditional() (word.Word, error) {
 	return c.verb.Word, nil
 }
 
-func (c *TypeTwoVerbConjugator) Imperative() (word.Word, error) {
+func (c *TypeTwoVerbConjugator) imperative() (word.Word, error) {
 	w, err := c.verb.Word.TrimLastRune()
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Imperative: %v", err)
@@ -145,7 +165,7 @@ func (c *TypeTwoVerbConjugator) Imperative() (word.Word, error) {
 	return w, nil
 }
 
-func (c *TypeTwoVerbConjugator) Volitional() (word.Word, error) {
+func (c *TypeTwoVerbConjugator) volitional() (word.Word, error) {
 	w, err := c.verb.Word.TrimLastRune()
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Volitional: %v", err)

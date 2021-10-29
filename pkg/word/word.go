@@ -7,36 +7,44 @@ import (
 	"github.com/yihanzhen/jpgrammar/pkg/kana"
 )
 
+// Word is the representation of a word in a sentence.
 type Word struct {
-	canonical string
-	display   string
+	// writing is the string representation of the word in written form.
+	// It can consist of any unicode rune.
+	writing string
+
+	// conjugateRef is how the word is spelled in hiraganas.
+	// It is used to determine what rules this word follow during conjugation.
+	// Can be empty if the word doesn't conjugate (anything other than verbs
+	// and adjectives).
+	conjugateRef string
 }
 
-func NewWord(canonical, display string) (Word, error) {
-	if canonical == "" {
-		return Word{}, fmt.Errorf("NewWord: canonical cannot be empty")
+// NewWord creates a new Word.
+func NewWord(writing, conjRef string) (Word, error) {
+	if writing == "" {
+		return Word{}, fmt.Errorf("NewWord: writing cannot be empty")
 	}
-	if !kana.IsHiraganaStr(canonical) {
-		return Word{}, fmt.Errorf("NewWord: canonical must be hiraganas only")
-	}
-	if display == "" {
-		display = canonical
+	if !kana.IsHiraganaStr(conjRef) {
+		return Word{}, fmt.Errorf("NewWord: got conjRef %s, want hiraganas only", conjRef)
 	}
 	w := Word{
-		canonical: canonical,
-		display:   display,
+		writing:      writing,
+		conjugateRef: conjRef,
 	}
 	return w, nil
 }
 
+// Write returns the string representation of the word.
 func (w Word) Write() string {
-	return w.display
+	return w.writing
 }
 
-func MustWord(canonical, display string) Word {
-	w, err := NewWord(canonical, display)
+// MustWord calls NewWord, but panics if any error occurs.
+func MustWord(writing, conjRef string) Word {
+	w, err := NewWord(writing, conjRef)
 	if err != nil {
-		log.Fatalf("mustWord: unable to create new word: %v", err)
+		log.Fatalf("MustWord: unable to create new word: %v", err)
 	}
 	return w
 }

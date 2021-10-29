@@ -16,11 +16,15 @@ type Particle struct {
 }
 
 var Topic = Particle{
-	Word: word.MustWord("は", "は"),
+	Word: word.MustWord("は", ""),
 }
 
 var State = Particle{
-	Word: word.MustWord("で", "で"),
+	Word: word.MustWord("で", ""),
+}
+
+var Uncertainty = Particle{
+	Word: word.MustWord("か", ""),
 }
 
 func (p Particle) OnAppend(conj *conjunctor.Conjunctor) error {

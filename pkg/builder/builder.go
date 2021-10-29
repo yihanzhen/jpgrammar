@@ -8,6 +8,7 @@ import (
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/particle"
 )
 
+// Builder represents a sentence builder.
 type Builder struct {
 	Vocab      *vocabulary.Vocabulary
 	Conjunctor *conjunctor.Conjunctor
@@ -15,6 +16,7 @@ type Builder struct {
 	*extender.ExtenderWrapper
 }
 
+// NewBuilder creates a new Builder.
 func NewBuilder() *Builder {
 	d := &diag.Diag{}
 	c := conjunctor.NewConjunctor()
@@ -28,6 +30,10 @@ func NewBuilder() *Builder {
 	return &b
 }
 
+// Append looks up a word from vocabulary, and then append it to the Conjunctor.
+// To chain calls to conjugate or extend the word appended, Append saves any error
+// to Diag instead of returning them. All following calls are no-ops if Diag
+// has any existing errors.
 func (b *Builder) Append(text string) *Builder {
 	if b.Diag.HasErrors() {
 		return b
@@ -44,7 +50,11 @@ func (b *Builder) Append(text string) *Builder {
 	return b
 }
 
-func (b *Builder) AppendParticle(p particle.Particle) *Builder {
+// Make appends a particle to the Conjunctor.
+// To chain calls to conjugate or extend the word appended, Append saves any error
+// to Diag instead of returning them. All following calls are no-ops if Diag
+// has any existing errors.
+func (b *Builder) Make(p particle.Particle) *Builder {
 	if b.Diag.HasErrors() {
 		return b
 	}
@@ -54,6 +64,7 @@ func (b *Builder) AppendParticle(p particle.Particle) *Builder {
 	return b
 }
 
+// Build returns the sentence built.
 func (b *Builder) Build() (string, error) {
 	return b.Conjunctor.Write()
 }

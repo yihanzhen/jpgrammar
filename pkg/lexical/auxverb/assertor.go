@@ -36,11 +36,11 @@ func (e PoliteAssertor) Negated(conj *conjunctor.Conjunctor) (extender.Extender,
 	if err != nil {
 		return e, fmt.Errorf("PoliteAssertor.Negated: %v", err)
 	}
-	if err := conj.RemoveHead(); err != nil {
+	if err := conj.ReplaceHead(particle.State); err != nil {
 		return e, fmt.Errorf("PoliteAssertor.Negated: %v", err)
 	}
 	p := Politer{}
-	if err := conj.Append(particle.State, particle.Topic, v, conjugation.NewConjugation(conjugationkind.Conjunctive), p); err != nil {
+	if err := conj.Append(particle.Topic, v, conjugation.NewConjugation(conjugationkind.Conjunctive), p); err != nil {
 		return e, fmt.Errorf("PoliteAssertor.Negated: %v", err)
 	}
 	ex, err := p.Negated(conj)

@@ -29,8 +29,8 @@ func (p Politer) OnWrite(_ conjunctor.Conjunctable, words []word.Word) ([]word.W
 }
 
 func (p Politer) Negated(conj *conjunctor.Conjunctor) (extender.Extender, error) {
-	conj.RemoveHead()
 	np := NegativePoliter{}
+	conj.ReplaceHead(np)
 	if err := conj.Append(np); err != nil {
 		return nil, fmt.Errorf("Politer.Negated: %v", err)
 	}
@@ -42,9 +42,9 @@ type NegativePoliter struct {
 }
 
 func (p NegativePoliter) OnAppend(conj *conjunctor.Conjunctor) error {
-	// if conj.GetWordKind() != wordkind.Verb && conj.GetConjugationKind() != conjugationkind.Conjunctive {
-	// 	return fmt.Errorf("Politer.OnAppend: cannot conjunct Politer to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
-	// }
+	if conj.GetWordKind() != wordkind.Verb && conj.GetConjugationKind() != conjugationkind.Conjunctive {
+		return fmt.Errorf("Politer.OnAppend: cannot conjunct Politer to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
+	}
 	conj.Insert(p)
 	conj.UpdateWordKind(wordkind.AuxVerb)
 	conj.UpdateConjugationKind(conjugationkind.Unknown)

@@ -43,11 +43,11 @@ func (c *Conjunctor) Write() (string, error) {
 	return res, nil
 }
 
-func (c *Conjunctor) RemoveHead() error {
+func (c *Conjunctor) ReplaceHead(part Conjunctable) error {
 	if len(c.parts) <= 1 {
 		return fmt.Errorf("RemoveHead: nothing to remove")
 	}
-	c.parts = c.parts[0 : len(c.parts)-1]
+	c.parts = append(c.parts[0:len(c.parts)-1], part)
 	return nil
 }
 

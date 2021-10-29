@@ -6,64 +6,85 @@ import (
 	"github.com/yihanzhen/jpgrammar/pkg/kana"
 )
 
+// Append appends a suffix to the Word.
 func (w Word) Append(str string) (Word, error) {
-	w2, err := NewWord(w.canonical+str, w.display+str)
+	var wt, conjRef string
+	if w.conjugateRef != "" {
+		conjRef = w.conjugateRef + str
+	}
+	wt = wt + str
+	w2, err := NewWord(wt, conjRef)
 	if err != nil {
 		return Word{}, fmt.Errorf("Word.Append: %v", err)
 	}
 	return w2, nil
 }
 
-func (w Word) AppendWord(w2 Word) (Word, error) {
-	w3, err := NewWord(w.canonical+w2.canonical, w.display+w2.display)
-	if err != nil {
-		return Word{}, fmt.Errorf("Word.AppendWord: %v", err)
-	}
-	return w3, nil
-}
-
+// TrimLastRune removes the last rune from the Word.
+// It errors if the conjugateRef of the word is unset because
+// there is no need to call this function for a unconjugatable word.
 func (w Word) TrimLastRune() (Word, error) {
-	c := []rune(w.canonical)
-	d := []rune(w.display)
-	w2, err := NewWord(string(c[0:len(c)-1]), string(d[0:len(d)-1]))
+	if w.conjugateRef == "" {
+		return Word{}, fmt.Errorf("Word.TrimLastRune: conjugateRef is unset")
+	}
+	wa := []rune(w.writing)
+	wt := string(wa[0 : len(wa)-1])
+	ca := []rune(w.conjugateRef)
+	conjRef := string(ca[0 : len(ca)-1])
+	w2, err := NewWord(wt, conjRef)
 	if err != nil {
 		return Word{}, fmt.Errorf("Word.TrimLastRune: %v", err)
 	}
 	return w2, nil
 }
 
+// ChangeLastRune changes the last rune of the Word.
+// It errors if the conjugateRef of the word is unset because
+// there is no need to call this function for a unconjugatable word.
 func (w Word) ChangeLastRune(r rune) (Word, error) {
-	c := []rune(w.canonical)
-	d := []rune(w.display)
-	if c[len(c)-1] != d[len(d)-1] {
-		return Word{}, fmt.Errorf("ChangeLastRune: canonial %s and display %s has different suffix", w.canonical, w.display)
+	if w.conjugateRef == "" {
+		return Word{}, fmt.Errorf("Word.ChangeLastRune: conjugateRef is unset")
 	}
-	w2, err := NewWord(string(append(c[0:len(c)-1], r)), string(append(d[0:len(d)-1], r)))
+	wa := []rune(w.writing)
+	wt := string(append(wa[0:len(wa)-1], r))
+	ca := []rune(w.conjugateRef)
+	conjRef := string(append(ca[0:len(ca)-1], r))
+	w2, err := NewWord(wt, conjRef)
 	if err != nil {
 		return Word{}, fmt.Errorf("Word.ChangeLastRune: %v", err)
 	}
 	return w2, nil
 }
 
+// ChangeLastRuneTo changes the last rune of the Word.
+// It errors if the conjugateRef of the word is unset because
+// there is no need to call this function for a unconjugatable word.
 func (w Word) ChangeLastRuneTo(f func(r rune) (rune, error)) (Word, error) {
-	c := []rune(w.canonical)
-	d := []rune(w.display)
-	clr := c[len(c)-1]
-	dlr := d[len(d)-1]
-	if clr != dlr {
-		return Word{}, fmt.Errorf("ChangeLastRuneTo: canonial %s and display %s has different suffix", w.canonical, w.display)
+	if w.conjugateRef == "" {
+		return Word{}, fmt.Errorf("Word.ChangeLastRuneTo: conjugateRef is unset")
+	}
+	wa := []rune(w.writing)
+	wlr := wa[len(wa)-1]
+	ca := []rune(w.conjugateRef)
+	clr := ca[len(ca)-1]
+	if wlr != clr {
+		return Word{}, fmt.Errorf("Word.ChangeLastRuneTo: writing %v and conjugateRef %v have different suffix", w.writing, w.conjugateRef)
 	}
 	nr, err := f(clr)
 	if err != nil {
 		return Word{}, fmt.Errorf("ChangeLastRuneTo: %v", err)
 	}
-	w2, err := NewWord(string(append(c[0:len(c)-1], nr)), string(append(d[0:len(d)-1], nr)))
+	wt := string(append(wa[0:len(wa)-1], nr))
+	conjRef := string(append(ca[0:len(ca)-1], nr))
+	w2, err := NewWord(wt, conjRef)
 	if err != nil {
-		return Word{}, fmt.Errorf("Word.ChangeLastRune: %v", err)
+		return Word{}, fmt.Errorf("Word.ChangeLastRuneTo: %v", err)
 	}
 	return w2, nil
 }
 
+// ToCol returns a function that returns the hiragana of the same row as the input,
+// but a different column.
 func ToCol(col int) func(r rune) (rune, error) {
 	return func(r rune) (rune, error) {
 		r2, err := kana.Col(r, col)
@@ -74,6 +95,7 @@ func ToCol(col int) func(r rune) (rune, error) {
 	}
 }
 
+// AToWa returns a function that returns `わ` if the input is `あ`.
 func AToWa(r rune) (rune, error) {
 	if r == 'あ' {
 		return 'わ', nil

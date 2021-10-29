@@ -8,7 +8,7 @@ func TestCheckLastRuneCol(t *testing.T) {
 		col   int
 	}{
 		{
-			input: Word{canonical: "たべる", display: "食べる"},
+			input: MustWord("食べる", "たべる"),
 			col:   2,
 		},
 	}

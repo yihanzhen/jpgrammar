@@ -43,22 +43,17 @@ func (v *Vocabulary) AddVerb(canonical, display string, opts ...verb.NewVerbOpti
 	v.dict[display] = vb
 }
 
-func (v *Vocabulary) AddNoun(canonical, display string) {
-	n, err := noun.NewNoun(canonical, display)
+func (v *Vocabulary) AddNoun(writing string) {
+	n, err := noun.NewNoun(writing)
 	if err != nil {
-		v.errors = append(v.errors, fmt.Errorf("AddVerb: %v", err))
+		v.errors = append(v.errors, fmt.Errorf("AddNoun: %v", err))
 		return
 	}
-	if _, ok := v.dict[canonical]; ok {
-		v.errors = append(v.errors, fmt.Errorf("AddVerb: canonical %q already exists", canonical))
+	if _, ok := v.dict[writing]; ok {
+		v.errors = append(v.errors, fmt.Errorf("AddNoun: writing %q already exists", writing))
 		return
 	}
-	if _, ok := v.dict[display]; ok {
-		v.errors = append(v.errors, fmt.Errorf("AddVerb: display %q already exists", display))
-		return
-	}
-	v.dict[canonical] = n
-	v.dict[display] = n
+	v.dict[writing] = n
 }
 
 func (v *Vocabulary) GetWord(str string) (Word, error) {

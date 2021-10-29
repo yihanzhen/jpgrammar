@@ -10,8 +10,8 @@ func TestChangeLastRuneToCol(t *testing.T) {
 		col   int
 	}{
 		{
-			input: Word{canonical: "のむ", display: "飲む"},
-			want:  Word{canonical: "のみ", display: "飲み"},
+			input: MustWord("飲む", "のむ"),
+			want:  MustWord("飲み", "のみ"),
 			col:   1,
 		},
 	}
