@@ -27,6 +27,10 @@ var Uncertainty = Particle{
 	Word: word.MustWord("か", ""),
 }
 
+var LikewiseTopic = Particle{
+	Word: word.MustWord("も", ""),
+}
+
 func (p Particle) OnAppend(conj *conjunctor.Conjunctor) error {
 	if (conj.GetWordKind() != wordkind.Noun || conj.GetWordKind() != wordkind.Unknown) && conj.GetConjugationKind() != conjugationkind.Unknown {
 		return fmt.Errorf("Particle.OnAppend: cannot conjunct particle to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())

@@ -30,8 +30,7 @@ func (p Politer) OnWrite(_ conjunctor.Conjunctable, words []word.Word) ([]word.W
 
 func (p Politer) Negated(conj *conjunctor.Conjunctor) (extender.Extender, error) {
 	np := NegativePoliter{}
-	conj.ReplaceHead(np)
-	if err := conj.Append(np); err != nil {
+	if err := conj.ReplaceHead(np); err != nil {
 		return nil, fmt.Errorf("Politer.Negated: %v", err)
 	}
 	return np, nil

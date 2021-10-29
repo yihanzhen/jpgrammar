@@ -20,7 +20,9 @@ type Conjunctor struct {
 }
 
 func NewConjunctor() *Conjunctor {
-	return &Conjunctor{}
+	return &Conjunctor{
+		conjugationKind: conjugationkind.Unknown,
+	}
 }
 
 func (c *Conjunctor) Write() (string, error) {

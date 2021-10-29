@@ -1,56 +1,98 @@
 package example
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/particle"
 )
 
-// Example1: わたしはマイク・ミラーです。
-func Example1() string {
+// L1E1: わたしはマイク・ミラーです。
+func L1E1() (string, error) {
 	b := builder.NewBuilder()
 	b.Vocab.AddNoun("わたし")
 	b.Vocab.AddNoun("マイク・ミラー")
 	if b.Diag.HasErrors() {
-		log.Fatalf("Adding vocabulary has errors: %v", b.Diag.GetErrors())
+		return "", fmt.Errorf("Adding vocabulary has errors: %v", b.Diag.GetErrors())
 	}
 
 	b.Append("わたし").Make(particle.Topic)
-	b.Append("ミラー").Asserted()
+	b.Append("マイク・ミラー").Asserted()
 	if b.Diag.HasErrors() {
-		log.Fatalf("Constructing sentence has errors: %v", b.Diag.GetErrors())
+		return "", fmt.Errorf("Constructing sentence has errors: %v", b.Diag.GetErrors())
 	}
 
 	sentence, err := b.Build()
 	if err != nil {
-		log.Fatalf("Printing sentence has errors: %v", b.Diag.GetErrors())
+		return "", fmt.Errorf("Printing sentence has errors: %v", b.Diag.GetErrors())
 	}
-	return sentence
+	return sentence, nil
 }
 
-// Example2: サントスさんは学生じゃありません。
-func Example2() string {
+// L1E2: サントスさんは学生ではありません。
+func L1E2() (string, error) {
 	b := builder.NewBuilder()
 	b.Vocab.AddNoun("サントスさん")
 	b.Vocab.AddNoun("学生")
 	if b.Diag.HasErrors() {
-		log.Fatalf("Adding vocabulary has errors: %v", b.Diag.GetErrors())
+		return "", fmt.Errorf("Adding vocabulary has errors: %v", b.Diag.GetErrors())
 	}
 
 	b.Append("サントスさん").Make(particle.Topic)
 	b.Append("学生").Asserted().Negated()
 	if b.Diag.HasErrors() {
-		log.Fatalf("Constructing sentence has errors: %v", b.Diag.GetErrors())
+		return "", fmt.Errorf("Constructing sentence has errors: %v", b.Diag.GetErrors())
 	}
 
 	sentence, err := b.Build()
 	if err != nil {
-		log.Fatalf("Printing sentence has errors: %v", b.Diag.GetErrors())
+		return "", fmt.Errorf("Printing sentence has errors: %v", b.Diag.GetErrors())
 	}
-	return sentence
+	return sentence, nil
 }
 
-func Example3() string {
-	return ""
+// L1E3: ミラーさんは会社員ですか。
+func L1E3() (string, error) {
+	b := builder.NewBuilder()
+	b.Vocab.AddNoun("ミラーさん")
+	b.Vocab.AddNoun("会社員")
+	if b.Diag.HasErrors() {
+		return "", fmt.Errorf("Adding vocabulary has errors: %v", b.Diag.GetErrors())
+	}
+
+	b.Append("ミラーさん").Make(particle.Topic)
+	b.Append("会社員").Asserted()
+	b.Make(particle.Uncertainty)
+	if b.Diag.HasErrors() {
+		return "", fmt.Errorf("Constructing sentence has errors: %v", b.Diag.GetErrors())
+	}
+
+	sentence, err := b.Build()
+	if err != nil {
+		return "", fmt.Errorf("Printing sentence has errors: %v", b.Diag.GetErrors())
+	}
+	return sentence, nil
+}
+
+// L1E4: サントスさんも会社員ですか。
+func L1E4() (string, error) {
+	b := builder.NewBuilder()
+	b.Vocab.AddNoun("サントスさん")
+	b.Vocab.AddNoun("会社員")
+	if b.Diag.HasErrors() {
+		return "", fmt.Errorf("Adding vocabulary has errors: %v", b.Diag.GetErrors())
+	}
+
+	b.Append("サントスさん").Make(particle.LikewiseTopic)
+	b.Append("会社員").Asserted()
+	b.Make(particle.Uncertainty)
+	if b.Diag.HasErrors() {
+		return "", fmt.Errorf("Constructing sentence has errors: %v", b.Diag.GetErrors())
+	}
+
+	sentence, err := b.Build()
+	if err != nil {
+		return "", fmt.Errorf("Printing sentence has errors: %v", b.Diag.GetErrors())
+	}
+	return sentence, nil
 }

@@ -1,14 +1,14 @@
 package conjugationkind
 
-type ConjugationKind int
+type ConjugationKind string
 
 const (
-	Unknown ConjugationKind = iota
-	Imperfective
-	Conjunctive
-	Attributive
-	Terminal
-	Volitional
-	Imperative
-	Conditional
+	Unknown      ConjugationKind = "Unknown"
+	Imperfective ConjugationKind = "Imperfective"
+	Conjunctive  ConjugationKind = "Conjunctive"
+	Attributive  ConjugationKind = "Attributive"
+	Terminal     ConjugationKind = "Terminal"
+	Volitional   ConjugationKind = "Volitional"
+	Imperative   ConjugationKind = "Imperative"
+	Conditional  ConjugationKind = "Conditional"
 )
