@@ -5,7 +5,7 @@ import (
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugationkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
@@ -31,15 +31,17 @@ var LikewiseTopic = Particle{
 	Word: word.MustWord("も", ""),
 }
 
-func (p Particle) OnAppend(conj *conjunctor.Conjunctor) error {
-	if (conj.GetWordKind() != wordkind.Noun || conj.GetWordKind() != wordkind.Unknown) && conj.GetConjugationKind() != conjugationkind.Unknown {
-		return fmt.Errorf("Particle.OnAppend: cannot conjunct particle to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
+func (p Particle) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
+	if (conj.GetWordKind() != wordkind.Noun || conj.GetWordKind() != wordkind.Unknown) && conj.GetConjugationKind() != kind.Unknown {
+		return nil, fmt.Errorf("Particle.OnAppend: cannot conjunct particle to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
 	}
-	conj.UpdateWordKind(wordkind.Particle)
-	conj.Insert(p)
-	return nil
+
+	return &conjunctor.ConjunctorUpdate{
+		WordKind: wordkind.Particle,
+		Inserts:  []conjunctor.Conjunctable{p},
+	}, nil
 }
 
-func (p Particle) OnWrite(_ conjunctor.Conjunctable, words []word.Word) ([]word.Word, error) {
+func (p Particle) OnWrite(words []word.Word, _ ...conjunctor.Conjunctable) ([]word.Word, error) {
 	return append(words, p.Word), nil
 }

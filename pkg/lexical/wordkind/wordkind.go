@@ -11,3 +11,21 @@ const (
 	AuxVerb
 	Particle
 )
+
+func (wk WordKind) String() string {
+	switch wk {
+	case Verb:
+		return "Verb"
+	case Noun:
+		return "Noun"
+	case Adjective:
+		return "Adjective"
+	case AdjNoun:
+		return "AdjNoun"
+	case AuxVerb:
+		return "AuxVerb"
+	case Particle:
+		return "Particle"
+	}
+	return "Unknown"
+}

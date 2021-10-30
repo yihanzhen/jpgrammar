@@ -45,15 +45,17 @@ func NewVerb(writing, conjRef string, opts ...NewVerbOption) (Verb, error) {
 	return v, nil
 }
 
-func (v Verb) OnAppend(c *conjunctor.Conjunctor) error {
+func (v Verb) OnConjunct(c *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
 	if c.GetWordKind() != wordkind.Particle {
-		return fmt.Errorf("Verb.OnAppend: cannot conjunct verb to wordkind: %v", c.GetWordKind())
+		return nil, fmt.Errorf("Verb.OnAppend: cannot conjunct verb to wordkind: %v", c.GetWordKind())
 	}
-	c.UpdateWordKind(wordkind.Verb)
-	c.Insert(v)
-	return nil
+
+	return &conjunctor.ConjunctorUpdate{
+		WordKind: wordkind.Verb,
+		Inserts:  []conjunctor.Conjunctable{v},
+	}, nil
 }
 
-func (v Verb) OnWrite(_ conjunctor.Conjunctable, words []word.Word) ([]word.Word, error) {
+func (v Verb) OnWrite(words []word.Word, _ ...conjunctor.Conjunctable) ([]word.Word, error) {
 	return append(words, v.Word), nil
 }

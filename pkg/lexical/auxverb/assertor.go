@@ -6,7 +6,7 @@ import (
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugationkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/particle"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/verb"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
@@ -17,17 +17,19 @@ type PoliteAssertor struct {
 	extender.UnimplementedExtender
 }
 
-func (p PoliteAssertor) OnAppend(conj *conjunctor.Conjunctor) error {
-	if conj.GetWordKind() != wordkind.Noun && conj.GetConjugationKind() != conjugationkind.Unknown {
-		return fmt.Errorf("PoliteAssertor.OnAppend: cannot conjunct PoliteAssertor to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
+func (p PoliteAssertor) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
+	if conj.GetWordKind() != wordkind.Noun && conj.GetConjugationKind() != kind.Unknown {
+		return nil, fmt.Errorf("PoliteAssertor.OnAppend: cannot conjunct PoliteAssertor to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
 	}
-	conj.Insert(p)
-	conj.UpdateWordKind(wordkind.AuxVerb)
-	conj.UpdateConjugationKind(conjugationkind.Unknown)
-	return nil
+
+	return &conjunctor.ConjunctorUpdate{
+		WordKind:        wordkind.AuxVerb,
+		ConjugationKind: kind.Unknown,
+		Inserts:         []conjunctor.Conjunctable{p},
+	}, nil
 }
 
-func (p PoliteAssertor) OnWrite(_ conjunctor.Conjunctable, words []word.Word) ([]word.Word, error) {
+func (p PoliteAssertor) OnWrite(words []word.Word, _ ...conjunctor.Conjunctable) ([]word.Word, error) {
 	return append(words, word.MustWord("です", "です")), nil
 }
 
@@ -36,13 +38,21 @@ func (e PoliteAssertor) Negated(conj *conjunctor.Conjunctor) (extender.Extender,
 	if err != nil {
 		return e, fmt.Errorf("PoliteAssertor.Negated: %v", err)
 	}
-	if err := conj.ReplaceHead(particle.State); err != nil {
+
+	if err := conj.Update(&conjunctor.ConjunctorUpdate{
+		WordKind:        wordkind.Particle,
+		ConjugationKind: kind.Unknown,
+		ReplacePrev:     true,
+		Inserts:         []conjunctor.Conjunctable{particle.State},
+	}); err != nil {
 		return e, fmt.Errorf("PoliteAssertor.Negated: %v", err)
 	}
+
 	p := Politer{}
-	if err := conj.Append(particle.Topic, v, conjugation.NewConjugation(conjugationkind.Conjunctive), p); err != nil {
+	if err := conj.Conjunct(particle.Topic, v, conjugation.NewConjugation(kind.Conjunctive), p); err != nil {
 		return e, fmt.Errorf("PoliteAssertor.Negated: %v", err)
 	}
+
 	ex, err := p.Negated(conj)
 	if err != nil {
 		return e, fmt.Errorf("PoliteAssertor.Negated: %v", err)

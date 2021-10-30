@@ -43,7 +43,7 @@ func (b *Builder) Append(text string) *Builder {
 		b.Diag.SaveError(err)
 		return b
 	}
-	if err := b.Conjunctor.Append(w); err != nil {
+	if err := b.Conjunctor.Conjunct(w); err != nil {
 		b.Diag.SaveError(err)
 	}
 	b.ExtenderWrapper.Extender = w
@@ -51,14 +51,14 @@ func (b *Builder) Append(text string) *Builder {
 }
 
 // Make appends a particle to the Conjunctor.
-// To chain calls to conjugate or extend the word appended, Append saves any error
+// To chain calls to conjugate or extend the word appended, Make saves any error
 // to Diag instead of returning them. All following calls are no-ops if Diag
 // has any existing errors.
 func (b *Builder) Make(p particle.Particle) *Builder {
 	if b.Diag.HasErrors() {
 		return b
 	}
-	if err := b.Conjunctor.Append(p); err != nil {
+	if err := b.Conjunctor.Conjunct(p); err != nil {
 		b.Diag.SaveError(err)
 	}
 	return b

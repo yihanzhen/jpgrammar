@@ -3,31 +3,31 @@ package verb
 import (
 	"fmt"
 
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugationkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
-func (v Verb) Conjugate(ck conjugationkind.ConjugationKind) (word.Word, error) {
+func (v Verb) Conjugate(ck kind.ConjugationKind) (word.Word, error) {
 	conj := v.getConjugator()
 	switch ck {
-	case conjugationkind.Imperfective:
-		return conj.imperfective()
-	case conjugationkind.Conjunctive:
+	case kind.Irrealis:
+		return conj.irrealis()
+	case kind.Conjunctive:
 		return conj.conjunctive()
-	case conjugationkind.Attributive:
+	case kind.Attributive:
 		return conj.attributive()
-	case conjugationkind.Terminal:
+	case kind.Terminal:
 		return conj.terminal()
-	case conjugationkind.Conditional:
+	case kind.Conditional:
 		return conj.conditional()
-	case conjugationkind.Volitional:
+	case kind.Volitional:
 		return conj.volitional()
 	}
 	return word.Word{}, fmt.Errorf("Verb.Conjugate: conjugationKind not Conjugatable: %v", ck)
 }
 
 type verbConjugator interface {
-	imperfective() (word.Word, error)
+	irrealis() (word.Word, error)
 	conjunctive() (word.Word, error)
 	attributive() (word.Word, error)
 	terminal() (word.Word, error)
@@ -61,7 +61,7 @@ type TypeOneVerbConjugator struct {
 	verb Verb
 }
 
-func (c *TypeOneVerbConjugator) imperfective() (word.Word, error) {
+func (c *TypeOneVerbConjugator) irrealis() (word.Word, error) {
 	w, err := c.verb.Word.ChangeLastRuneTo(word.ToCol(0))
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeOneVerbConjugator.Imperfective: %v", err)
@@ -125,7 +125,7 @@ type TypeTwoVerbConjugator struct {
 	verb Verb
 }
 
-func (c *TypeTwoVerbConjugator) imperfective() (word.Word, error) {
+func (c *TypeTwoVerbConjugator) irrealis() (word.Word, error) {
 	w, err := c.verb.Word.TrimLastRune()
 	if err != nil {
 		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Imperfective: %v", err)

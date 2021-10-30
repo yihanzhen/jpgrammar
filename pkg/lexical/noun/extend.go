@@ -11,7 +11,7 @@ import (
 // Assert asserts the noun.
 func (n Noun) Asserted(conj *conjunctor.Conjunctor) (extender.Extender, error) {
 	pa := auxverb.PoliteAssertor{}
-	if err := conj.Append(pa); err != nil {
+	if err := conj.Conjunct(pa); err != nil {
 		return nil, fmt.Errorf("Noun.Asserted: %v", err)
 	}
 	return pa, nil

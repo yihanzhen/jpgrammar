@@ -4,55 +4,47 @@ import (
 	"fmt"
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugationkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
-// OnAppend implements the Conjunctable interface.
-func (n Noun) OnAppend(conj *conjunctor.Conjunctor) error {
+// OnConjunct implements the Conjunctable interface.
+func (n Noun) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
+
+	cu := &conjunctor.ConjunctorUpdate{
+		WordKind:        wordkind.Noun,
+		ConjugationKind: kind.Unknown,
+		Inserts:         []conjunctor.Conjunctable{n},
+	}
+
 	// Starting a new sentence.
-	if conj.GetWordKind() == wordkind.Unknown && conj.GetConjugationKind() == conjugationkind.Unknown {
-		conj.UpdateWordKind(wordkind.Noun)
-		conj.UpdateWordKind(wordkind.Unknown)
-		conj.Insert(n)
-		return nil
+	if conj.GetWordKind() == wordkind.Unknown && conj.GetConjugationKind() == kind.Unknown {
+		return cu, nil
 	}
 	// Starting a new component.
 	if conj.GetWordKind() == wordkind.Particle {
-		conj.UpdateWordKind(wordkind.Noun)
-		conj.UpdateWordKind(wordkind.Unknown)
-		conj.Insert(n)
-		return nil
+		return cu, nil
 	}
 
 	// Compound words.
-	if conj.GetWordKind() == wordkind.Noun && conj.GetConjugationKind() == conjugationkind.Unknown {
-		conj.UpdateWordKind(wordkind.Noun)
-		conj.UpdateWordKind(wordkind.Unknown)
-		conj.Insert(n)
-		return nil
+	if conj.GetWordKind() == wordkind.Noun && conj.GetConjugationKind() == kind.Unknown {
+		return cu, nil
 	}
 
-	if conj.GetWordKind() == wordkind.Verb && conj.GetConjugationKind() == conjugationkind.Conjunctive {
-		conj.UpdateWordKind(wordkind.Noun)
-		conj.UpdateWordKind(wordkind.Unknown)
-		conj.Insert(n)
-		return nil
+	if conj.GetWordKind() == wordkind.Verb && conj.GetConjugationKind() == kind.Conjunctive {
+		return cu, nil
 	}
 
 	// Attributive.
-	if conj.GetConjugationKind() == conjugationkind.Attributive {
-		conj.UpdateWordKind(wordkind.Noun)
-		conj.UpdateWordKind(wordkind.Unknown)
-		conj.Insert(n)
-		return nil
+	if conj.GetConjugationKind() == kind.Attributive {
+		return cu, nil
 	}
 
-	return fmt.Errorf("Noun.OnAppend: cannot conjunct noun to wordkind %v and conjugationkind: %v", conj.GetWordKind(), conj.GetConjugationKind())
+	return nil, fmt.Errorf("Noun(%q).OnAppend: cannot conjunct noun to wordkind %s and conjugationkind %s", n.Write(), conj.GetWordKind(), conj.GetConjugationKind())
 }
 
 // OnWrite implements the Conjunctable interface.
-func (n Noun) OnWrite(_ conjunctor.Conjunctable, words []word.Word) ([]word.Word, error) {
+func (n Noun) OnWrite(words []word.Word, _ ...conjunctor.Conjunctable) ([]word.Word, error) {
 	return append(words, n.Word), nil
 }
