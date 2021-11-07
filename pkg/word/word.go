@@ -20,6 +20,12 @@ type Word struct {
 	conjugateRef string
 }
 
+// Omitted represents an omitted word.
+var Omitted Word = Word{
+	writing:      "",
+	conjugateRef: "",
+}
+
 // NewWord creates a new Word.
 func NewWord(writing, conjRef string) (Word, error) {
 	if writing == "" {

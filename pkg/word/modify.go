@@ -12,7 +12,7 @@ func (w Word) Append(str string) (Word, error) {
 	if w.conjugateRef != "" {
 		conjRef = w.conjugateRef + str
 	}
-	wt = wt + str
+	wt = w.writing + str
 	w2, err := NewWord(wt, conjRef)
 	if err != nil {
 		return Word{}, fmt.Errorf("Word.Append: %v", err)

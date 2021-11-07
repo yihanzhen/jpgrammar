@@ -23,6 +23,10 @@ const (
 	// For adjectives, this conjugation form is used to conjunct negative auxverb "ない", perfective
 	// auxverb "た".
 	Conjunctive
+
+	// Attributive is the attributive conjugation, or 連体形.
+	// For verbs, adjectives, nouns and adjectival nouns, this conjugation is used to conjunct
+	// nouns.
 	Attributive
 	Terminal
 	Volitional

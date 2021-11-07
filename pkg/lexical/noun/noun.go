@@ -27,3 +27,11 @@ func NewNoun(writing string) (Noun, error) {
 	}
 	return n, nil
 }
+
+// Omitted represents an omitted noun.
+var Omitted Noun = Noun{
+	Word: word.Omitted,
+	UnimplementedExtender: extender.UnimplementedExtender{
+		Name: "Noun",
+	},
+}

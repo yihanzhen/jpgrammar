@@ -3,7 +3,7 @@ package builder
 import (
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/diag"
-	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
+	"github.com/yihanzhen/jpgrammar/pkg/builder/extender/wrapper"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/vocabulary"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/particle"
 )
@@ -13,16 +13,17 @@ type Builder struct {
 	Vocab      *vocabulary.Vocabulary
 	Conjunctor *conjunctor.Conjunctor
 	Diag       *diag.Diag
-	*extender.ExtenderWrapper
+	*wrapper.ExtenderWrapper
 }
 
 // NewBuilder creates a new Builder.
 func NewBuilder() *Builder {
+	v := vocabulary.NewVocabulary()
 	d := &diag.Diag{}
 	c := conjunctor.NewConjunctor()
-	e := extender.NewExtenderWrapper(d, c)
+	e := wrapper.NewExtenderWrapper(v, d, c)
 	b := Builder{
-		Vocab:           vocabulary.NewVocabulary(),
+		Vocab:           v,
 		Conjunctor:      c,
 		ExtenderWrapper: e,
 		Diag:            d,
@@ -50,11 +51,11 @@ func (b *Builder) Append(text string) *Builder {
 	return b
 }
 
-// Make appends a particle to the Conjunctor.
+// Mark appends a particle to the Conjunctor.
 // To chain calls to conjugate or extend the word appended, Make saves any error
 // to Diag instead of returning them. All following calls are no-ops if Diag
 // has any existing errors.
-func (b *Builder) Make(p particle.Particle) *Builder {
+func (b *Builder) Mark(p particle.Particle) *Builder {
 	if b.Diag.HasErrors() {
 		return b
 	}
@@ -62,6 +63,10 @@ func (b *Builder) Make(p particle.Particle) *Builder {
 		b.Diag.SaveError(err)
 	}
 	return b
+}
+
+func (b *Builder) WithContraction(ct interface{}) {
+
 }
 
 // Build returns the sentence built.

@@ -8,15 +8,20 @@ import (
 
 type Extender interface {
 
-	// To assert the component to be extended. The component
+	// Asserted is to assert the component to be extended. The component
 	// should be a noun, an adjectival noun, or anything
 	// that functions like a nominal.
 	Asserted(*conjunctor.Conjunctor) (Extender, error)
 
-	// To negate the component to be extended. The component
-	// should be a verb, an adjective, certain aux verbs such
+	// Negated is to negate the component to be extended. The component
+	// should be a verb, an adjective, or certain aux verbs such
 	// as です, だ.
 	Negated(*conjunctor.Conjunctor) (Extender, error)
+
+	// Attributing is to make the component to be extended as attributives.
+	// The component can be a verb, an adjective, a noun, an adjectival noun,
+	// or certain aux verbs such as た.
+	Attributing(conj *conjunctor.Conjunctor, c conjunctor.Conjunctable) (Extender, error)
 
 	// AsSubject(*conjunctor.Conjunctor) (Extender, error)
 	// AsObject(*conjunctor.Conjunctor) (Extender, error)
@@ -31,7 +36,6 @@ type Extender interface {
 	// Politely(*conjunctor.Conjunctor) (Extender, error)
 	// Desirably(*conjunctor.Conjunctor) (Extender, error)
 	// Purposefully(*conjunctor.Conjunctor) (Extender, error)
-	// Attributing(*conjunctor.Conjunctor) (Extender, error)
 	// Terminate(*conjunctor.Conjunctor) (Extender, error)
 	// Pause(*conjunctor.Conjunctor) (Extender, error)
 	// Statified(*conjunctor.Conjunctor) (Extender, error)
@@ -52,6 +56,10 @@ func (u UnimplementedExtender) Asserted(*conjunctor.Conjunctor) (Extender, error
 
 func (u UnimplementedExtender) Negated(*conjunctor.Conjunctor) (Extender, error) {
 	return nil, fmt.Errorf("%sNegated()", u.getName())
+}
+
+func (u UnimplementedExtender) Attributing(_ *conjunctor.Conjunctor, c conjunctor.Conjunctable) (Extender, error) {
+	return nil, fmt.Errorf("%s.Attributing(%s)", u.getName(), c)
 }
 
 func (u UnimplementedExtender) getName() string {

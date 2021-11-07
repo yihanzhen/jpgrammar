@@ -3,26 +3,20 @@ package vocabulary
 import (
 	"fmt"
 
-	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
-	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
+	"github.com/yihanzhen/jpgrammar/pkg/builder/vocabulary/word"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/noun"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/verb"
 )
 
 type Vocabulary struct {
-	dict   map[string]Word
+	dict   map[string]word.Word
 	errors []error
 }
 
 func NewVocabulary() *Vocabulary {
 	return &Vocabulary{
-		dict: map[string]Word{},
+		dict: map[string]word.Word{},
 	}
-}
-
-type Word interface {
-	conjunctor.Conjunctable
-	extender.Extender
 }
 
 func (v *Vocabulary) AddVerb(canonical, display string, opts ...verb.NewVerbOption) {
@@ -56,7 +50,10 @@ func (v *Vocabulary) AddNoun(writing string) {
 	v.dict[writing] = n
 }
 
-func (v *Vocabulary) GetWord(str string) (Word, error) {
+func (v *Vocabulary) GetWord(str string) (word.Word, error) {
+	if str == word.OmittedNoun {
+		return noun.Omitted, nil
+	}
 	w, ok := v.dict[str]
 	if !ok {
 		return nil, fmt.Errorf("GetWord: word %s does not exist", str)
