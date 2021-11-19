@@ -5,20 +5,23 @@ import (
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/auxverb"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/auxverb/assertor"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/casing"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/particle"
 )
 
 // Assert asserts the noun.
 func (n Noun) Asserted(conj *conjunctor.Conjunctor) (extender.Extender, error) {
-	pa := auxverb.PoliteAssertor{}
+	pa := assertor.PoliteAssertor{}
 	if err := conj.Conjunct(pa); err != nil {
 		return pa, fmt.Errorf("Noun.Asserted: %v", err)
 	}
 	return pa, nil
 }
 
+// Attributing marks the noun as an attributive.
 func (n Noun) Attributing(conj *conjunctor.Conjunctor, c conjunctor.Conjunctable) (extender.Extender, error) {
 	if n2, ok := c.(Noun); ok {
 		if err := conj.Conjunct(conjugation.NewConjugation(kind.Attributive), n2); err != nil {
@@ -26,7 +29,17 @@ func (n Noun) Attributing(conj *conjunctor.Conjunctor, c conjunctor.Conjunctable
 		}
 		return n2, nil
 	}
-
 	return nil, fmt.Errorf("Noun.Attributing: only nouns can be attributed to, got %s", c)
+}
 
+// As marks the noun as a case.
+func (n Noun) As(conj *conjunctor.Conjunctor, caseKind casing.CaseKind) (extender.Extender, error) {
+	caseMarker, err := particle.From(caseKind)
+	if err != nil {
+		return nil, fmt.Errorf("Noun.As: %v", err)
+	}
+	if err := conj.Conjunct(caseMarker); err != nil {
+		return nil, fmt.Errorf("Noun.As: %v", err)
+	}
+	return caseMarker, nil
 }

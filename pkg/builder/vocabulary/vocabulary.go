@@ -19,22 +19,22 @@ func NewVocabulary() *Vocabulary {
 	}
 }
 
-func (v *Vocabulary) AddVerb(canonical, display string, opts ...verb.NewVerbOption) {
-	vb, err := verb.NewVerb(canonical, display, opts...)
+func (v *Vocabulary) AddVerb(writing, conjRef string, opts ...verb.NewVerbOption) {
+	vb, err := verb.NewVerb(writing, conjRef, opts...)
 	if err != nil {
 		v.errors = append(v.errors, fmt.Errorf("AddVerb: %v", err))
 		return
 	}
-	if _, ok := v.dict[canonical]; ok {
-		v.errors = append(v.errors, fmt.Errorf("AddVerb: canonical %q already exists", canonical))
+	if _, ok := v.dict[writing]; ok {
+		v.errors = append(v.errors, fmt.Errorf("AddVerb: canonical %q already exists", writing))
 		return
 	}
-	if _, ok := v.dict[display]; ok {
-		v.errors = append(v.errors, fmt.Errorf("AddVerb: display %q already exists", display))
+	if _, ok := v.dict[conjRef]; ok {
+		v.errors = append(v.errors, fmt.Errorf("AddVerb: display %q already exists", conjRef))
 		return
 	}
-	v.dict[canonical] = vb
-	v.dict[display] = vb
+	v.dict[writing] = vb
+	v.dict[conjRef] = vb
 }
 
 func (v *Vocabulary) AddNoun(writing string) {

@@ -3,6 +3,7 @@ package conjunctor
 import (
 	"fmt"
 
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/casing"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
@@ -25,6 +26,7 @@ type Conjunctor struct {
 	parts           []conjunctableWrapper
 	wordKind        wordkind.WordKind
 	conjugationKind kind.ConjugationKind
+	caseKind        casing.CaseKind
 }
 
 // ConjunctorUpdate is the callback response of OnConjunct to update the state
@@ -35,6 +37,7 @@ type ConjunctorUpdate struct {
 	CachePrev       bool
 	ReplacePrev     bool
 	Inserts         []Conjunctable
+	Case            casing.CaseKind
 }
 
 // NewConjunctor creates a new conjunctor.
@@ -76,6 +79,10 @@ func (c *Conjunctor) GetConjugationKind() kind.ConjugationKind {
 	return c.conjugationKind
 }
 
+func (c *Conjunctor) GetCaseKind() casing.CaseKind {
+	return c.caseKind
+}
+
 // Conjunct conjuncts one or more Conjunctables.
 func (c *Conjunctor) Conjunct(parts ...Conjunctable) error {
 	for _, p := range parts {
@@ -93,6 +100,7 @@ func (c *Conjunctor) Conjunct(parts ...Conjunctable) error {
 func (c *Conjunctor) Update(cu *ConjunctorUpdate) error {
 	c.wordKind = cu.WordKind
 	c.conjugationKind = cu.ConjugationKind
+	c.caseKind = cu.Case
 	if cu.CachePrev {
 		if len(c.parts) == 0 {
 			return fmt.Errorf("got ConjunctorUpdate CachePrev == true, but Conjunctor has no prev")

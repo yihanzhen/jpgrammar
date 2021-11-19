@@ -42,6 +42,11 @@ func (v Verb) getConjugator() verbConjugator {
 			verb: v,
 		}
 	}
+	if v.CheckSuffix("する") {
+		return &suruConjugator{
+			verb: v,
+		}
+	}
 	if !v.CheckLastRune('る') {
 		return &TypeOneVerbConjugator{
 			verb: v,
@@ -175,4 +180,56 @@ func (c *TypeTwoVerbConjugator) volitional() (word.Word, error) {
 		return word.Word{}, fmt.Errorf("TypeTwoVerbConjugator.Volitional: %v", err)
 	}
 	return w, nil
+}
+
+type suruConjugator struct {
+	verb Verb
+}
+
+func (c *suruConjugator) irrealis() (word.Word, error) {
+	w, err := c.verb.Word.ChangeLastRunes(2, "し")
+	if err != nil {
+		return word.Word{}, fmt.Errorf("suruVerbConjugator.Imperfective: %v", err)
+	}
+	w, err = w.ChangeLastRuneTo(word.AToWa)
+	if err != nil {
+		return word.Word{}, fmt.Errorf("suruVerbConjugator.Imperfective: %v", err)
+	}
+	return w, nil
+}
+
+func (c *suruConjugator) conjunctive() (word.Word, error) {
+	w, err := c.verb.Word.ChangeLastRunes(2, "し")
+	if err != nil {
+		return word.Word{}, fmt.Errorf("suruVerbConjugator.conjunctive: %v", err)
+	}
+	w, err = w.ChangeLastRuneTo(word.AToWa)
+	if err != nil {
+		return word.Word{}, fmt.Errorf("suruVerbConjugator.conjunctive: %v", err)
+	}
+	return w, nil
+}
+
+func (c *suruConjugator) attributive() (word.Word, error) {
+	return word.Word{}, fmt.Errorf("unimplemented: suruVerbConjugator.attributive")
+}
+
+func (c *suruConjugator) terminal() (word.Word, error) {
+	return word.Word{}, fmt.Errorf("unimplemented: suruVerbConjugator.terminal")
+
+}
+
+func (c *suruConjugator) conditional() (word.Word, error) {
+	return word.Word{}, fmt.Errorf("unimplemented: suruVerbConjugator.conditional")
+
+}
+
+func (c *suruConjugator) imperative() (word.Word, error) {
+	return word.Word{}, fmt.Errorf("unimplemented: suruVerbConjugator.imperitive")
+
+}
+
+func (c *suruConjugator) volitional() (word.Word, error) {
+	return word.Word{}, fmt.Errorf("unimplemented: suruVerbConjugator.volitional")
+
 }

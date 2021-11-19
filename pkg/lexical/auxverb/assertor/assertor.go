@@ -1,10 +1,11 @@
-package auxverb
+package assertor
 
 import (
 	"fmt"
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/auxverb/politer"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/particle"
@@ -33,10 +34,10 @@ func (p PoliteAssertor) OnWrite(words []word.Word, _ ...conjunctor.Conjunctable)
 	return append(words, word.MustWord("です", "です")), nil
 }
 
-func (e PoliteAssertor) Negated(conj *conjunctor.Conjunctor) (extender.Extender, error) {
+func (p PoliteAssertor) Negated(conj *conjunctor.Conjunctor) (extender.Extender, error) {
 	v, err := verb.NewVerb("ある", "ある")
 	if err != nil {
-		return e, fmt.Errorf("PoliteAssertor.Negated: %v", err)
+		return nil, fmt.Errorf("PoliteAssertor.Negated: %v", err)
 	}
 
 	if err := conj.Update(&conjunctor.ConjunctorUpdate{
@@ -45,17 +46,16 @@ func (e PoliteAssertor) Negated(conj *conjunctor.Conjunctor) (extender.Extender,
 		ReplacePrev:     true,
 		Inserts:         []conjunctor.Conjunctable{particle.State},
 	}); err != nil {
-		return e, fmt.Errorf("PoliteAssertor.Negated: %v", err)
+		return nil, fmt.Errorf("PoliteAssertor.Negated: %v", err)
 	}
 
-	p := Politer{}
-	if err := conj.Conjunct(particle.Topic, v, conjugation.NewConjugation(kind.Conjunctive), p); err != nil {
-		return e, fmt.Errorf("PoliteAssertor.Negated: %v", err)
+	if err := conj.Conjunct(particle.Topic, v, conjugation.NewConjugation(kind.Conjunctive), politer.Politer); err != nil {
+		return nil, fmt.Errorf("PoliteAssertor.Negated: %v", err)
 	}
 
-	ex, err := p.Negated(conj)
+	ex, err := politer.Politer.Negated(conj)
 	if err != nil {
-		return e, fmt.Errorf("PoliteAssertor.Negated: %v", err)
+		return nil, fmt.Errorf("PoliteAssertor.Negated: %v", err)
 	}
 	return ex, nil
 }

@@ -83,6 +83,26 @@ func (w Word) ChangeLastRuneTo(f func(r rune) (rune, error)) (Word, error) {
 	return w2, nil
 }
 
+func (w Word) ChangeLastRunes(n int, to string) (Word, error) {
+	if w.conjugateRef == "" {
+		return Word{}, fmt.Errorf("Word.ChangeLastRunes: conjugateRef is unset")
+	}
+	wa := []rune(w.writing)
+	wlr := wa[len(wa)-n:]
+	ca := []rune(w.conjugateRef)
+	clr := ca[len(ca)-n:]
+	if string(wlr) != string(clr) {
+		return Word{}, fmt.Errorf("Word.ChangeLastRuneTo: writing %v and conjugateRef %v have different suffix", w.writing, w.conjugateRef)
+	}
+	wt := string(wa[0:len(wa)-n]) + to
+	conjRef := string(ca[0:len(ca)-n]) + to
+	w2, err := NewWord(wt, conjRef)
+	if err != nil {
+		return Word{}, fmt.Errorf("Word.ChangeLastRuneTo: %v", err)
+	}
+	return w2, nil
+}
+
 // ToCol returns a function that returns the hiragana of the same row as the input,
 // but a different column.
 func ToCol(col int) func(r rune) (rune, error) {

@@ -51,7 +51,7 @@ func L3E2() (string, error) {
 	return sentence, nil
 }
 
-// L2E3: これはどこのカメラですか。
+// L3E3: これはどこのカメラですか。
 func L3E3() (string, error) {
 	b := builder.NewBuilder()
 	b.Vocab.AddNoun("これ")

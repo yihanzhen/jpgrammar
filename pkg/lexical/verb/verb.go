@@ -5,6 +5,7 @@ import (
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/casing"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
@@ -46,14 +47,17 @@ func NewVerb(writing, conjRef string, opts ...NewVerbOption) (Verb, error) {
 }
 
 func (v Verb) OnConjunct(c *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
-	if c.GetWordKind() != wordkind.Particle {
-		return nil, fmt.Errorf("Verb.OnAppend: cannot conjunct verb to wordkind: %v", c.GetWordKind())
-	}
-
-	return &conjunctor.ConjunctorUpdate{
+	cu := &conjunctor.ConjunctorUpdate{
 		WordKind: wordkind.Verb,
 		Inserts:  []conjunctor.Conjunctable{v},
-	}, nil
+	}
+	if c.GetCaseKind() != casing.Unknown {
+		return cu, nil
+	}
+	if c.GetWordKind() == wordkind.Particle {
+		return cu, nil
+	}
+	return nil, fmt.Errorf("Verb.OnConjunct: cannot conjunct verb to wordkind: %v", c.GetWordKind())
 }
 
 func (v Verb) OnWrite(words []word.Word, _ ...conjunctor.Conjunctable) ([]word.Word, error) {

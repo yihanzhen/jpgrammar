@@ -16,19 +16,23 @@ type Particle struct {
 }
 
 var Topic = Particle{
-	Word: word.MustWord("は", ""),
+	Word:     word.MustWord("は", ""),
+	Extender: extender.NewUnimplementedExtender("topic particle"),
 }
 
 var State = Particle{
-	Word: word.MustWord("で", ""),
+	Word:     word.MustWord("で", ""),
+	Extender: extender.NewUnimplementedExtender("state particle"),
 }
 
 var Uncertainty = Particle{
-	Word: word.MustWord("か", ""),
+	Word:     word.MustWord("か", ""),
+	Extender: extender.NewUnimplementedExtender("uncertainty particle"),
 }
 
 var LikewiseTopic = Particle{
-	Word: word.MustWord("も", ""),
+	Word:     word.MustWord("も", ""),
+	Extender: extender.NewUnimplementedExtender("likewise topic particle"),
 }
 
 func (p Particle) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
