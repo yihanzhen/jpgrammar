@@ -1,4 +1,4 @@
-package casing
+package casekind
 
 type CaseKind int
 
@@ -22,3 +22,18 @@ const (
 	// Time is the general time when an event happens. It does not need any case marker.
 	Time
 )
+
+// String implements the Stringer interface.
+func (c CaseKind) String() string {
+	switch c {
+	case Start:
+		return "start"
+	case End:
+		return "end"
+	case Timestamp:
+		return "timestamp"
+	case Time:
+		return "time"
+	}
+	return "unknown"
+}

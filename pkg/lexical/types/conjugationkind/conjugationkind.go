@@ -1,4 +1,4 @@
-package kind
+package conjugationkind
 
 // ConjugationKind represents a conjugation kind.
 type ConjugationKind int
@@ -34,6 +34,7 @@ const (
 	Conditional
 )
 
+// String implements the Stringer interface.
 func (c ConjugationKind) String() string {
 	switch c {
 	case Irrealis:

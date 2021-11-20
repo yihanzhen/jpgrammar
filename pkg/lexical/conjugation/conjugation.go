@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
-	ck "github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
-	wk "github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
+	ck "github.com/yihanzhen/jpgrammar/pkg/lexical/types/conjugationkind"
+	wk "github.com/yihanzhen/jpgrammar/pkg/lexical/types/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
@@ -13,10 +13,13 @@ type Conjugatable interface {
 	Conjugate(ck.ConjugationKind) (word.Word, error)
 }
 
+// A conjugation represents a conjugation for a verb, adjective, adjectival noun, noun or
+// aux verb.
 type Conjugation struct {
 	kind ck.ConjugationKind
 }
 
+// NewConjugation returns a new conjugation.
 func NewConjugation(kind ck.ConjugationKind) Conjugation {
 	return Conjugation{
 		kind: kind,
@@ -47,6 +50,7 @@ var conjugationPrevTable map[wk.WordKind]map[ck.ConjugationKind]bool = map[wk.Wo
 	},
 }
 
+// OnConjunct implements the Conjunctable interface.
 func (cj Conjugation) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
 	cjs, ok := conjugationPrevTable[conj.GetWordKind()]
 	if !ok {
@@ -63,6 +67,7 @@ func (cj Conjugation) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.Conju
 	}, nil
 }
 
+// OnWrite implements the Conjunctable interface.
 func (cj Conjugation) OnWrite(words []word.Word, prev ...conjunctor.Conjunctable) ([]word.Word, error) {
 	if len(prev) != 1 {
 		return nil, fmt.Errorf("Conjugation(%s).OnWrite: got prev %v, want only one", cj.kind, prev)

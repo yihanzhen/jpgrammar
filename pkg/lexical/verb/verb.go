@@ -5,8 +5,8 @@ import (
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/casing"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/casekind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
@@ -51,7 +51,7 @@ func (v Verb) OnConjunct(c *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate
 		WordKind: wordkind.Verb,
 		Inserts:  []conjunctor.Conjunctable{v},
 	}
-	if c.GetCaseKind() != casing.Unknown {
+	if c.GetCaseKind() != casekind.Unknown {
 		return cu, nil
 	}
 	if c.GetWordKind() == wordkind.Particle {

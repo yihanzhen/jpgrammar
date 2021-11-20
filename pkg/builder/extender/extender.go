@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/casing"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/casekind"
 )
 
 type Extender interface {
@@ -26,7 +26,7 @@ type Extender interface {
 
 	// As is to make the component to be extended as case. The component has to
 	// be a noun.
-	As(*conjunctor.Conjunctor, casing.CaseKind) (Extender, error)
+	As(*conjunctor.Conjunctor, casekind.CaseKind) (Extender, error)
 
 	// Politely is to make the previous component polite. The component should either
 	// be a verb, in which case calling this function will conjunct the polite aux verb
@@ -81,7 +81,7 @@ func (u UnimplementedExtender) Attributing(_ *conjunctor.Conjunctor, c conjuncto
 	return u, fmt.Errorf("%s.Attributing(%s)", u.getName(), c)
 }
 
-func (u UnimplementedExtender) As(*conjunctor.Conjunctor, casing.CaseKind) (Extender, error) {
+func (u UnimplementedExtender) As(*conjunctor.Conjunctor, casekind.CaseKind) (Extender, error) {
 	return u, fmt.Errorf("%s.As()", u.getName())
 }
 

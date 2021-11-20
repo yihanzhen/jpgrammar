@@ -3,9 +3,9 @@ package conjunctor
 import (
 	"fmt"
 
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/casing"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/casekind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/conjugationkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
@@ -25,19 +25,19 @@ type conjunctableWrapper struct {
 type Conjunctor struct {
 	parts           []conjunctableWrapper
 	wordKind        wordkind.WordKind
-	conjugationKind kind.ConjugationKind
-	caseKind        casing.CaseKind
+	conjugationKind conjugationkind.ConjugationKind
+	caseKind        casekind.CaseKind
 }
 
 // ConjunctorUpdate is the callback response of OnConjunct to update the state
 // of the Conjunctor.
 type ConjunctorUpdate struct {
 	WordKind        wordkind.WordKind
-	ConjugationKind kind.ConjugationKind
+	ConjugationKind conjugationkind.ConjugationKind
 	CachePrev       bool
 	ReplacePrev     bool
 	Inserts         []Conjunctable
-	Case            casing.CaseKind
+	Case            casekind.CaseKind
 }
 
 // NewConjunctor creates a new conjunctor.
@@ -75,11 +75,11 @@ func (c *Conjunctor) GetWordKind() wordkind.WordKind {
 }
 
 // GetWordKind returns the latest conjugation kind.
-func (c *Conjunctor) GetConjugationKind() kind.ConjugationKind {
+func (c *Conjunctor) GetConjugationKind() conjugationkind.ConjugationKind {
 	return c.conjugationKind
 }
 
-func (c *Conjunctor) GetCaseKind() casing.CaseKind {
+func (c *Conjunctor) GetCaseKind() casekind.CaseKind {
 	return c.caseKind
 }
 

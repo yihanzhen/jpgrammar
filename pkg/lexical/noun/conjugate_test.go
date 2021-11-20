@@ -3,7 +3,7 @@ package noun
 import (
 	"testing"
 
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/conjugationkind"
 )
 
 func TestConjugate(t *testing.T) {
@@ -11,7 +11,7 @@ func TestConjugate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("setup: %v", err)
 	}
-	attr, err := n.Conjugate(kind.Attributive)
+	attr, err := n.Conjugate(conjugationkind.Attributive)
 	if err != nil {
 		t.Errorf("Conjugate attributive: %v", err)
 	}

@@ -5,8 +5,8 @@ import (
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/conjugationkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
@@ -36,7 +36,7 @@ var LikewiseTopic = Particle{
 }
 
 func (p Particle) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
-	if (conj.GetWordKind() != wordkind.Noun || conj.GetWordKind() != wordkind.Unknown) && conj.GetConjugationKind() != kind.Unknown {
+	if (conj.GetWordKind() != wordkind.Noun || conj.GetWordKind() != wordkind.Unknown) && conj.GetConjugationKind() != conjugationkind.Unknown {
 		return nil, fmt.Errorf("Particle.OnAppend: cannot conjunct particle to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
 	}
 

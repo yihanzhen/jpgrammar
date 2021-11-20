@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/conjugationkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
@@ -14,12 +14,12 @@ func (n Noun) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpd
 
 	cu := &conjunctor.ConjunctorUpdate{
 		WordKind:        wordkind.Noun,
-		ConjugationKind: kind.Unknown,
+		ConjugationKind: conjugationkind.Unknown,
 		Inserts:         []conjunctor.Conjunctable{n},
 	}
 
 	// Starting a new sentence.
-	if conj.GetWordKind() == wordkind.Unknown && conj.GetConjugationKind() == kind.Unknown {
+	if conj.GetWordKind() == wordkind.Unknown && conj.GetConjugationKind() == conjugationkind.Unknown {
 		return cu, nil
 	}
 	// Starting a new component.
@@ -28,16 +28,16 @@ func (n Noun) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpd
 	}
 
 	// Compound words.
-	if conj.GetWordKind() == wordkind.Noun && conj.GetConjugationKind() == kind.Unknown {
+	if conj.GetWordKind() == wordkind.Noun && conj.GetConjugationKind() == conjugationkind.Unknown {
 		return cu, nil
 	}
 
-	if conj.GetWordKind() == wordkind.Verb && conj.GetConjugationKind() == kind.Conjunctive {
+	if conj.GetWordKind() == wordkind.Verb && conj.GetConjugationKind() == conjugationkind.Conjunctive {
 		return cu, nil
 	}
 
 	// Attributive.
-	if conj.GetConjugationKind() == kind.Attributive {
+	if conj.GetConjugationKind() == conjugationkind.Attributive {
 		return cu, nil
 	}
 

@@ -7,7 +7,7 @@ import (
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/auxverb/politer"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
+	kind "github.com/yihanzhen/jpgrammar/pkg/lexical/types/conjugationkind"
 )
 
 func (v Verb) Politely(conj *conjunctor.Conjunctor) (extender.Extender, error) {

@@ -5,8 +5,8 @@ import (
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/wordkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/conjugationkind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/wordkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
@@ -17,13 +17,13 @@ type PoliterType struct {
 var Politer = PoliterType{}
 
 func (p PoliterType) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
-	if conj.GetWordKind() != wordkind.Verb && conj.GetConjugationKind() != kind.Conjunctive {
+	if conj.GetWordKind() != wordkind.Verb && conj.GetConjugationKind() != conjugationkind.Conjunctive {
 		return nil, fmt.Errorf("Politer.OnConjunct: cannot conjunct Politer to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
 	}
 
 	return &conjunctor.ConjunctorUpdate{
 		WordKind:        wordkind.AuxVerb,
-		ConjugationKind: kind.Unknown,
+		ConjugationKind: conjugationkind.Unknown,
 		Inserts:         []conjunctor.Conjunctable{p},
 	}, nil
 }
@@ -58,12 +58,12 @@ type NegativePoliter struct {
 }
 
 func (p NegativePoliter) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
-	if conj.GetWordKind() != wordkind.Verb && conj.GetConjugationKind() != kind.Conjunctive {
+	if conj.GetWordKind() != wordkind.Verb && conj.GetConjugationKind() != conjugationkind.Conjunctive {
 		return nil, fmt.Errorf("Politer.OnAppend: cannot conjunct Politer to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
 	}
 	return &conjunctor.ConjunctorUpdate{
 		WordKind:        wordkind.AuxVerb,
-		ConjugationKind: kind.Unknown,
+		ConjugationKind: conjugationkind.Unknown,
 		Inserts:         []conjunctor.Conjunctable{p},
 	}, nil
 }
@@ -85,13 +85,13 @@ func (c CompletedPoliterType) OnWrite(words []word.Word, _ ...conjunctor.Conjunc
 }
 
 func (c CompletedPoliterType) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
-	if conj.GetWordKind() != wordkind.Verb && conj.GetConjugationKind() != kind.Conjunctive {
+	if conj.GetWordKind() != wordkind.Verb && conj.GetConjugationKind() != conjugationkind.Conjunctive {
 		return nil, fmt.Errorf("CompletedPoliter.OnConjunct: cannot conjunct Politer to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
 	}
 
 	return &conjunctor.ConjunctorUpdate{
 		WordKind:        wordkind.AuxVerb,
-		ConjugationKind: kind.Unknown,
+		ConjugationKind: conjugationkind.Unknown,
 		Inserts:         []conjunctor.Conjunctable{c},
 	}, nil
 }

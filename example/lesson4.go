@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/casing"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/particle"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/casekind"
 )
 
 // L4E1: 今、4時五分です。
@@ -17,7 +17,7 @@ func L4E1() (string, error) {
 		return "", fmt.Errorf("Adding vocabulary has errors: %v", b.Diag.GetErrors())
 	}
 
-	b.Append("今").As(casing.Time)
+	b.Append("今").As(casekind.Time)
 	b.Append("4時五分").Asserted()
 	if b.Diag.HasErrors() {
 		return "", fmt.Errorf("Constructing sentence has errors: %v", b.Diag.GetErrors())
@@ -42,8 +42,8 @@ func L4E2() (string, error) {
 	}
 
 	b.Append("私").Mark(particle.Topic)
-	b.Append("9時").As(casing.Start)
-	b.Append("5時").As(casing.End)
+	b.Append("9時").As(casekind.Start)
+	b.Append("5時").As(casekind.End)
 	b.Append("働く").Politely()
 	if b.Diag.HasErrors() {
 		return "", fmt.Errorf("Constructing sentence has errors: %v", b.Diag.GetErrors())
@@ -67,7 +67,7 @@ func L4E3() (string, error) {
 	}
 
 	b.Append("私").Mark(particle.Topic)
-	b.Append("朝6時").As(casing.Timestamp)
+	b.Append("朝6時").As(casekind.Timestamp)
 	b.Append("起く").Politely()
 	if b.Diag.HasErrors() {
 		return "", fmt.Errorf("Constructing sentence has errors: %v", b.Diag.GetErrors())
@@ -91,7 +91,7 @@ func L4E4() (string, error) {
 	}
 
 	b.Append("私").Mark(particle.Topic)
-	b.Append("昨日").As(casing.Time)
+	b.Append("昨日").As(casekind.Time)
 	b.Append("勉強する").Politely().Completed()
 	if b.Diag.HasErrors() {
 		return "", fmt.Errorf("Constructing sentence has errors: %v", b.Diag.GetErrors())

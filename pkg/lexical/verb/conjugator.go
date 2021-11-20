@@ -3,7 +3,7 @@ package verb
 import (
 	"fmt"
 
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
+	kind "github.com/yihanzhen/jpgrammar/pkg/lexical/types/conjugationkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 

@@ -5,7 +5,7 @@ import (
 	"github.com/yihanzhen/jpgrammar/pkg/builder/diag"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/vocabulary"
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/casing"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/casekind"
 )
 
 type ExtenderWrapper struct {
@@ -51,7 +51,7 @@ func (w *ExtenderWrapper) Attributing(noun string) *ExtenderWrapper {
 	return w
 }
 
-func (w *ExtenderWrapper) As(ck casing.CaseKind) *ExtenderWrapper {
+func (w *ExtenderWrapper) As(ck casekind.CaseKind) *ExtenderWrapper {
 	ext, err := w.Extender.As(w.Conjunctor, ck)
 	if err != nil {
 

@@ -3,13 +3,13 @@ package noun
 import (
 	"fmt"
 
-	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation/kind"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/conjugationkind"
 	"github.com/yihanzhen/jpgrammar/pkg/word"
 )
 
-func (n Noun) Conjugate(ck kind.ConjugationKind) (word.Word, error) {
+func (n Noun) Conjugate(ck conjugationkind.ConjugationKind) (word.Word, error) {
 	switch ck {
-	case kind.Attributive:
+	case conjugationkind.Attributive:
 		return n.Word.Append("の")
 	}
 	return word.Word{}, fmt.Errorf("Verb.Conjugate: conjugationKind not Conjugatable: %v", ck)
