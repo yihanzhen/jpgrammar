@@ -60,4 +60,7 @@ var caseMarkerMap map[casekind.CaseKind]CaseMarker = map[casekind.CaseKind]CaseM
 	casekind.End:       newCaseMarker("まで", "end case marker", casekind.End),
 	casekind.Timestamp: newCaseMarker("に", "timestamp case marker", casekind.Timestamp),
 	casekind.Time:      {Case: casekind.Time, Word: word.Omitted, UnimplementedExtender: extender.NewUnimplementedExtender("time case marker")},
+	casekind.Direction: newCaseMarker("へ", "direction case marker", casekind.Direction),
+	casekind.Approach:  newCaseMarker("で", "direction case marker", casekind.Approach),
+	casekind.Companion: newCaseMarker("と", "direction case marker", casekind.Companion),
 }

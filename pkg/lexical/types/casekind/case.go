@@ -21,6 +21,15 @@ const (
 
 	// Time is the general time when an event happens. It does not need any case marker.
 	Time
+
+	// Direction is the direction of a motion. It is marked by the case marker へ.
+	Direction
+
+	// Approach is the approach of an action. It is marked by the case marker で.
+	Approach
+
+	// Companion is the companion that the action is done with. It is marked by the case marker と.
+	Companion
 )
 
 // String implements the Stringer interface.
@@ -34,6 +43,12 @@ func (c CaseKind) String() string {
 		return "timestamp"
 	case Time:
 		return "time"
+	case Direction:
+		return "direction"
+	case Approach:
+		return "approach"
+	case Companion:
+		return "companion"
 	}
 	return "unknown"
 }

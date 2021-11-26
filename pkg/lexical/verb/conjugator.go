@@ -47,6 +47,11 @@ func (v Verb) getConjugator() verbConjugator {
 			verb: v,
 		}
 	}
+	if v.CheckSuffix("くる") {
+		return &kuruConjugator{
+			verb: v,
+		}
+	}
 	if !v.CheckLastRune('る') {
 		return &TypeOneVerbConjugator{
 			verb: v,
@@ -203,10 +208,6 @@ func (c *suruConjugator) conjunctive() (word.Word, error) {
 	if err != nil {
 		return word.Word{}, fmt.Errorf("suruVerbConjugator.conjunctive: %v", err)
 	}
-	w, err = w.ChangeLastRuneTo(word.AToWa)
-	if err != nil {
-		return word.Word{}, fmt.Errorf("suruVerbConjugator.conjunctive: %v", err)
-	}
 	return w, nil
 }
 
@@ -231,5 +232,47 @@ func (c *suruConjugator) imperative() (word.Word, error) {
 
 func (c *suruConjugator) volitional() (word.Word, error) {
 	return word.Word{}, fmt.Errorf("unimplemented: suruVerbConjugator.volitional")
+
+}
+
+type kuruConjugator struct {
+	verb Verb
+}
+
+func (c *kuruConjugator) irrealis() (word.Word, error) {
+	return word.Word{}, fmt.Errorf("unimplemented: kuruVerbConjugator.attributive")
+}
+
+func (c *kuruConjugator) conjunctive() (word.Word, error) {
+	// TODO: 来る's conjugations usually result in different pronunciation.
+	// Include that too.
+	w, err := c.verb.Word.TrimLastRune()
+	if err != nil {
+		return word.Word{}, fmt.Errorf("kuruVerbConjugator.conjunctive: %v", err)
+	}
+	return w, nil
+}
+
+func (c *kuruConjugator) attributive() (word.Word, error) {
+	return word.Word{}, fmt.Errorf("unimplemented: kuruVerbConjugator.attributive")
+}
+
+func (c *kuruConjugator) terminal() (word.Word, error) {
+	return word.Word{}, fmt.Errorf("unimplemented: kuruVerbConjugator.terminal")
+
+}
+
+func (c *kuruConjugator) conditional() (word.Word, error) {
+	return word.Word{}, fmt.Errorf("unimplemented: kuruVerbConjugator.conditional")
+
+}
+
+func (c *kuruConjugator) imperative() (word.Word, error) {
+	return word.Word{}, fmt.Errorf("unimplemented: kuruVerbConjugator.imperitive")
+
+}
+
+func (c *kuruConjugator) volitional() (word.Word, error) {
+	return word.Word{}, fmt.Errorf("unimplemented: kuruVerbConjugator.volitional")
 
 }
