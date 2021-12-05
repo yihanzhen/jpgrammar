@@ -54,7 +54,7 @@ func (v Verb) OnConjunct(c *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate
 	if c.GetCaseKind() != casekind.Unknown {
 		return cu, nil
 	}
-	if c.GetWordKind() == wordkind.Particle {
+	if c.GetWordKind() == wordkind.Particle || c.GetWordKind() == wordkind.Adverb {
 		return cu, nil
 	}
 	return nil, fmt.Errorf("Verb.OnConjunct: cannot conjunct verb to wordkind: %v", c.GetWordKind())

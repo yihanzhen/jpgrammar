@@ -18,6 +18,9 @@ const (
 	// AdjNoun represents an adjectival noun, or na-adjective.
 	AdjNoun
 
+	// Adverb represents an adverb.
+	Adverb
+
 	// AuxVerb represents an aux verb.
 	AuxVerb
 

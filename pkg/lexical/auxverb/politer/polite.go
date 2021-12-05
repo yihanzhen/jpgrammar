@@ -53,6 +53,16 @@ func (p PoliterType) Completed(conj *conjunctor.Conjunctor) (extender.Extender, 
 	return CompletedPoliter, nil
 }
 
+func (p PoliterType) Volitionally(conj *conjunctor.Conjunctor) (extender.Extender, error) {
+	if err := conj.Update(&conjunctor.ConjunctorUpdate{
+		ReplacePrev: true,
+		Inserts:     []conjunctor.Conjunctable{VolitionalPoliter},
+	}); err != nil {
+		return nil, fmt.Errorf("Politer.Volitionally: %v", err)
+	}
+	return VolitionalPoliter, nil
+}
+
 type NegativePoliter struct {
 	extender.UnimplementedExtender
 }
@@ -93,5 +103,29 @@ func (c CompletedPoliterType) OnConjunct(conj *conjunctor.Conjunctor) (*conjunct
 		WordKind:        wordkind.AuxVerb,
 		ConjugationKind: conjugationkind.Unknown,
 		Inserts:         []conjunctor.Conjunctable{c},
+	}, nil
+}
+
+type VolitionalPoliterType struct {
+	extender.UnimplementedExtender
+}
+
+var VolitionalPoliter = VolitionalPoliterType{
+	UnimplementedExtender: extender.NewUnimplementedExtender("volitional politer"),
+}
+
+func (v VolitionalPoliterType) OnWrite(words []word.Word, _ ...conjunctor.Conjunctable) ([]word.Word, error) {
+	return append(words, word.MustWord("ましょう", "")), nil
+}
+
+func (v VolitionalPoliterType) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
+	if conj.GetWordKind() != wordkind.Verb && conj.GetConjugationKind() != conjugationkind.Conjunctive {
+		return nil, fmt.Errorf("CompletedPoliter.OnConjunct: cannot conjunct Politer to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
+	}
+
+	return &conjunctor.ConjunctorUpdate{
+		WordKind:        wordkind.AuxVerb,
+		ConjugationKind: conjugationkind.Volitional,
+		Inserts:         []conjunctor.Conjunctable{v},
 	}, nil
 }

@@ -78,6 +78,15 @@ func (w *ExtenderWrapper) Completed() *ExtenderWrapper {
 	return w
 }
 
+func (w *ExtenderWrapper) Volitionally() *ExtenderWrapper {
+	ext, err := w.Extender.Volitionally(w.Conjunctor)
+	if err != nil {
+
+	}
+	w.Extender = ext
+	return w
+}
+
 func (w *ExtenderWrapper) wrapExtenderFunc(f func() (extender.Extender, error)) *ExtenderWrapper {
 	if w.Diag.HasErrors() {
 		return w

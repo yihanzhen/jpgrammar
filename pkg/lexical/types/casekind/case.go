@@ -30,6 +30,12 @@ const (
 
 	// Companion is the companion that the action is done with. It is marked by the case marker と.
 	Companion
+
+	// Object is the object of an action. It is marked by the case marker を.
+	Object
+
+	// Venue is the place the action takes place. It is marked by the case marker で.
+	Venue
 )
 
 // String implements the Stringer interface.
@@ -49,6 +55,10 @@ func (c CaseKind) String() string {
 		return "approach"
 	case Companion:
 		return "companion"
+	case Object:
+		return "object"
+	case Venue:
+		return "venue"
 	}
 	return "unknown"
 }

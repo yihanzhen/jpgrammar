@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/vocabulary/word"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/adverb"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/noun"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/verb"
 )
@@ -48,6 +49,19 @@ func (v *Vocabulary) AddNoun(writing string) {
 		return
 	}
 	v.dict[writing] = n
+}
+
+func (v *Vocabulary) AddAdverb(writing string) {
+	adv, err := adverb.NewAdverb(writing)
+	if err != nil {
+		v.errors = append(v.errors, fmt.Errorf("AddAdverb: %v", err))
+		return
+	}
+	if _, ok := v.dict[writing]; ok {
+		v.errors = append(v.errors, fmt.Errorf("AddAdverb: writing %q already exists", writing))
+		return
+	}
+	v.dict[writing] = adv
 }
 
 func (v *Vocabulary) GetWord(str string) (word.Word, error) {

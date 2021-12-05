@@ -40,12 +40,11 @@ type Extender interface {
 	// aux verbs such as です, だ, ます and their respective negative forms.
 	Completed(*conjunctor.Conjunctor) (Extender, error)
 
+	// Volitionally is to change the previous component to its volitional form, or 意志形.
+	// The component can be a verb or aux verbs such as です, だ, ます.
+	Volitionally(*conjunctor.Conjunctor) (Extender, error)
+
 	// AsSubject(*conjunctor.Conjunctor) (Extender, error)
-	// AsObject(*conjunctor.Conjunctor) (Extender, error)
-	// AsDirection(*conjunctor.Conjunctor) (Extender, error)
-	// AsVenue(*conjunctor.Conjunctor) (Extender, error)
-	// AsLocation(*conjunctor.Conjunctor) (Extender, error)
-	// AsApproach(*conjunctor.Conjunctor) (Extender, error)
 	// Potentially(*conjunctor.Conjunctor) (Extender, error)
 	// Desirably(*conjunctor.Conjunctor) (Extender, error)
 	// Purposefully(*conjunctor.Conjunctor) (Extender, error)
@@ -53,7 +52,7 @@ type Extender interface {
 	// Pause(*conjunctor.Conjunctor) (Extender, error)
 	// Statified(*conjunctor.Conjunctor) (Extender, error)
 	// Imperatively(*conjunctor.Conjunctor) (Extender, error)
-	// Volitionally(*conjunctor.Conjunctor) (Extender, error)
+
 	// Forbade(*conjunctor.Conjunctor) (Extender, error)
 }
 
@@ -91,6 +90,10 @@ func (u UnimplementedExtender) Politely(*conjunctor.Conjunctor) (Extender, error
 
 func (u UnimplementedExtender) Completed(*conjunctor.Conjunctor) (Extender, error) {
 	return u, fmt.Errorf("%s.Completed()", u.getName())
+}
+
+func (u UnimplementedExtender) Volitionally(*conjunctor.Conjunctor) (Extender, error) {
+	return u, fmt.Errorf("%s.Volitionally()", u.getName())
 }
 
 func (u UnimplementedExtender) getName() string {

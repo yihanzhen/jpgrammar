@@ -83,6 +83,14 @@ func (c *Conjunctor) GetCaseKind() casekind.CaseKind {
 	return c.caseKind
 }
 
+func (c *Conjunctor) IsSentenceStart() bool {
+	return len(c.parts) == 0
+}
+
+func (c *Conjunctor) CanStartNewComponent() bool {
+	return c.IsSentenceStart() || c.GetCaseKind() != casekind.Unknown || c.GetWordKind() == wordkind.Adverb
+}
+
 // Conjunct conjuncts one or more Conjunctables.
 func (c *Conjunctor) Conjunct(parts ...Conjunctable) error {
 	for _, p := range parts {
