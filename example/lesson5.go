@@ -45,7 +45,7 @@ func L5E2() (string, error) {
 	}
 
 	b.Append("私").Mark(particle.Topic)
-	b.Append("タクシー").As(casekind.Approach)
+	b.Append("タクシー").As(casekind.Instrument)
 	b.Append("うち").As(casekind.Direction)
 	b.Append("帰る").Politely()
 	if b.Diag.HasErrors() {

@@ -18,12 +18,7 @@ func (n Noun) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpd
 		Inserts:         []conjunctor.Conjunctable{n},
 	}
 
-	// Starting a new sentence.
-	if conj.GetWordKind() == wordkind.Unknown && conj.GetConjugationKind() == conjugationkind.Unknown {
-		return cu, nil
-	}
-	// Starting a new component.
-	if conj.GetWordKind() == wordkind.Particle {
+	if conj.NewComponentOK() {
 		return cu, nil
 	}
 

@@ -32,7 +32,7 @@ func NewAdverb(writing string) (Adverb, error) {
 
 // OnWrite implements the Conjunctable interface.
 func (adv Adverb) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
-	if !conj.CanStartNewComponent() {
+	if !conj.NewComponentOK() {
 		return nil, fmt.Errorf("Adverb.OnConjunct: sentence can't start new component")
 	}
 	return &conjunctor.ConjunctorUpdate{

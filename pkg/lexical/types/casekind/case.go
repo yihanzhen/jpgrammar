@@ -25,14 +25,17 @@ const (
 	// Direction is the direction of a motion. It is marked by the case marker へ.
 	Direction
 
-	// Approach is the approach of an action. It is marked by the case marker で.
-	Approach
+	// Instrument is the approach of an action. It is marked by the case marker で.
+	Instrument
 
 	// Companion is the companion that the action is done with. It is marked by the case marker と.
 	Companion
 
 	// Object is the object of an action. It is marked by the case marker を.
 	Object
+
+	// IndirectObject is the indirect object of an action, usually the person. It is marked by the case marker に.
+	IndirectObject
 
 	// Venue is the place the action takes place. It is marked by the case marker で.
 	Venue
@@ -51,12 +54,14 @@ func (c CaseKind) String() string {
 		return "time"
 	case Direction:
 		return "direction"
-	case Approach:
-		return "approach"
+	case Instrument:
+		return "instrument"
 	case Companion:
 		return "companion"
 	case Object:
 		return "object"
+	case IndirectObject:
+		return "indirect object"
 	case Venue:
 		return "venue"
 	}

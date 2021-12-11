@@ -56,13 +56,14 @@ func From(caseKind casekind.CaseKind) (CaseMarker, error) {
 }
 
 var caseMarkerMap map[casekind.CaseKind]CaseMarker = map[casekind.CaseKind]CaseMarker{
-	casekind.Start:     newCaseMarker("から", "start case marker", casekind.Start),
-	casekind.End:       newCaseMarker("まで", "end case marker", casekind.End),
-	casekind.Timestamp: newCaseMarker("に", "timestamp case marker", casekind.Timestamp),
-	casekind.Time:      {Case: casekind.Time, Word: word.Omitted, UnimplementedExtender: extender.NewUnimplementedExtender("time case marker")},
-	casekind.Direction: newCaseMarker("へ", "direction case marker", casekind.Direction),
-	casekind.Approach:  newCaseMarker("で", "approach case marker", casekind.Approach),
-	casekind.Companion: newCaseMarker("と", "direction case marker", casekind.Companion),
-	casekind.Object:    newCaseMarker("を", "object case marker", casekind.Object),
-	casekind.Venue:     newCaseMarker("で", "venue case marker", casekind.Venue),
+	casekind.Start:          newCaseMarker("から", "start case marker", casekind.Start),
+	casekind.End:            newCaseMarker("まで", "end case marker", casekind.End),
+	casekind.Timestamp:      newCaseMarker("に", "timestamp case marker", casekind.Timestamp),
+	casekind.Time:           {Case: casekind.Time, Word: word.Omitted, UnimplementedExtender: extender.NewUnimplementedExtender("time case marker")},
+	casekind.Direction:      newCaseMarker("へ", "direction case marker", casekind.Direction),
+	casekind.Instrument:     newCaseMarker("で", "approach case marker", casekind.Instrument),
+	casekind.Companion:      newCaseMarker("と", "direction case marker", casekind.Companion),
+	casekind.Object:         newCaseMarker("を", "object case marker", casekind.Object),
+	casekind.Venue:          newCaseMarker("で", "venue case marker", casekind.Venue),
+	casekind.IndirectObject: newCaseMarker("に", "indirect object case marker", casekind.IndirectObject),
 }

@@ -87,8 +87,8 @@ func (c *Conjunctor) IsSentenceStart() bool {
 	return len(c.parts) == 0
 }
 
-func (c *Conjunctor) CanStartNewComponent() bool {
-	return c.IsSentenceStart() || c.GetCaseKind() != casekind.Unknown || c.GetWordKind() == wordkind.Adverb
+func (c *Conjunctor) NewComponentOK() bool {
+	return c.IsSentenceStart() || c.GetCaseKind() != casekind.Unknown || c.GetWordKind() == wordkind.Adverb || c.GetWordKind() == wordkind.Particle
 }
 
 // Conjunct conjuncts one or more Conjunctables.
