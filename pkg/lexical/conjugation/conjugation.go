@@ -16,13 +16,22 @@ type Conjugatable interface {
 // A conjugation represents a conjugation for a verb, adjective, adjectival noun, noun or
 // aux verb.
 type Conjugation struct {
-	kind ck.ConjugationKind
+	kind    ck.ConjugationKind
+	euphony func(word.Word) (word.Word, error)
 }
 
 // NewConjugation returns a new conjugation.
 func NewConjugation(kind ck.ConjugationKind) Conjugation {
+	return NewConjugationWithEuphony(kind, func(w word.Word) (word.Word, error) {
+		return w, nil
+	})
+}
+
+// NewConjugationWithEuphony returns a new conjugation with euphony.
+func NewConjugationWithEuphony(kind ck.ConjugationKind, euphony func(word.Word) (word.Word, error)) Conjugation {
 	return Conjugation{
-		kind: kind,
+		kind:    kind,
+		euphony: euphony,
 	}
 }
 
@@ -77,8 +86,12 @@ func (cj Conjugation) OnWrite(words []word.Word, prev ...conjunctor.Conjunctable
 		if err != nil {
 			return nil, fmt.Errorf("Conjugation(%s).OnWrite: %v", cj.kind, err)
 		}
-		words = append(words, w)
+		w2, err := cj.euphony(w)
+		if err != nil {
+			return nil, fmt.Errorf("Conjugation(%s).OnWrite: %v", cj.kind, err)
+		}
+		words = append(words, w2)
 		return words, nil
 	}
-	return nil, fmt.Errorf("Conjugation.OnWrite(%s): Conjunctable not conjugatble", cj.kind)
+	return nil, fmt.Errorf("Conjugation.OnWrite(%s): Conjunctable %v not conjugatble", prev[0], cj.kind)
 }

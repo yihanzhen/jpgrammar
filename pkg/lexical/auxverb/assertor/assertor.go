@@ -23,7 +23,11 @@ var PoliteAssertor = PoliteAssertorType{
 }
 
 func (p PoliteAssertorType) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
-	if conj.GetWordKind() != wordkind.Noun && conj.GetConjugationKind() != conjugationkind.Unknown {
+	if conj.GetWordKind() != wordkind.Noun && conj.GetWordKind() != wordkind.AdjNoun && conj.GetWordKind() != wordkind.Adjective {
+		return nil, fmt.Errorf("PoliteAssertor.OnAppend: cannot conjunct PoliteAssertor to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
+	}
+
+	if conj.GetConjugationKind() != conjugationkind.Unknown {
 		return nil, fmt.Errorf("PoliteAssertor.OnAppend: cannot conjunct PoliteAssertor to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
 	}
 

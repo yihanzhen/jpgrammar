@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder/vocabulary/word"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/adjective"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/adjnoun"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/adverb"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/noun"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/verb"
@@ -51,6 +53,32 @@ func (v *Vocabulary) AddNoun(writing string) {
 	v.dict[writing] = n
 }
 
+func (v *Vocabulary) AddAdjNoun(writing string) {
+	n, err := adjnoun.NewAdjNoun(writing)
+	if err != nil {
+		v.errors = append(v.errors, fmt.Errorf("AddAdjNoun: %v", err))
+		return
+	}
+	if _, ok := v.dict[writing]; ok {
+		v.errors = append(v.errors, fmt.Errorf("AddAdjNoun: writing %q already exists", writing))
+		return
+	}
+	v.dict[writing] = n
+}
+
+func (v *Vocabulary) AddAdjective(writing string) {
+	n, err := adjective.NewAdjective(writing)
+	if err != nil {
+		v.errors = append(v.errors, fmt.Errorf("AddAdjective: %v", err))
+		return
+	}
+	if _, ok := v.dict[writing]; ok {
+		v.errors = append(v.errors, fmt.Errorf("AddAdjective: writing %q already exists", writing))
+		return
+	}
+	v.dict[writing] = n
+}
+
 func (v *Vocabulary) AddAdverb(writing string) {
 	adv, err := adverb.NewAdverb(writing)
 	if err != nil {
@@ -76,5 +104,8 @@ func (v *Vocabulary) GetWord(str string) (word.Word, error) {
 }
 
 func (v *Vocabulary) GetError() error {
+	if len(v.errors) == 0 {
+		return nil
+	}
 	return fmt.Errorf("Vocabulary has errors: %v", v.errors)
 }

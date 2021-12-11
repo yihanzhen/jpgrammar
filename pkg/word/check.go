@@ -8,7 +8,7 @@ import (
 
 // CheckSuffix checks if the conjugateRef of a word has a certain suffix.
 func (w Word) CheckSuffix(suf string) bool {
-	return strings.HasSuffix(w.conjugateRef, suf)
+	return strings.HasSuffix(w.conjugateRef, suf) || strings.HasSuffix(w.writing, suf)
 }
 
 // CheckLastRune checks if the conjugateRef of a word ends in a certain rune.
