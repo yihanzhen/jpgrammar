@@ -39,6 +39,12 @@ const (
 
 	// Venue is the place the action takes place. It is marked by the case marker で.
 	Venue
+
+	// Subject is the subject of an action. It is marked by the case marker が.
+	Subject
+
+	// Location is the location of a state. It is marked by the case marker に.
+	Location
 )
 
 // String implements the Stringer interface.
@@ -64,6 +70,10 @@ func (c CaseKind) String() string {
 		return "indirect object"
 	case Venue:
 		return "venue"
+	case Subject:
+		return "subject"
+	case Location:
+		return "location"
 	}
 	return "unknown"
 }

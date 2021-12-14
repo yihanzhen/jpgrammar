@@ -66,4 +66,6 @@ var caseMarkerMap map[casekind.CaseKind]CaseMarker = map[casekind.CaseKind]CaseM
 	casekind.Object:         newCaseMarker("を", "object case marker", casekind.Object),
 	casekind.Venue:          newCaseMarker("で", "venue case marker", casekind.Venue),
 	casekind.IndirectObject: newCaseMarker("に", "indirect object case marker", casekind.IndirectObject),
+	casekind.Subject:        newCaseMarker("が", "subject case marker", casekind.Subject),
+	casekind.Location:       newCaseMarker("に", "location case marker", casekind.Location),
 }

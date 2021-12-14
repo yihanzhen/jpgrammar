@@ -5,19 +5,22 @@ import (
 
 	"github.com/yihanzhen/jpgrammar/pkg/builder"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/particle"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/casekind"
 )
 
-// L8E1: 櫻はきれいです。
-func L8E1() (string, error) {
+// L10E1: あそこに佐藤さんがいます。
+func L10E1() (string, error) {
 	b := builder.NewBuilder()
-	b.Vocab.AddNoun("櫻")
-	b.Vocab.AddAdjNoun("きれい")
+	b.Vocab.AddNoun("あそこ")
+	b.Vocab.AddNoun("佐藤さん")
+	b.Vocab.AddVerb("いる", "いる")
 	if b.Vocab.GetError() != nil {
 		return "", fmt.Errorf("Adding vocabulary has errors: %v", b.Vocab.GetError())
 	}
 
-	b.Append("櫻").Mark(particle.Topic)
-	b.Append("きれい").Asserted()
+	b.Append("あそこ").As(casekind.Location)
+	b.Append("佐藤さん").As(casekind.Subject)
+	b.Append("いる").Politely()
 	if b.Diag.HasErrors() {
 		return "", fmt.Errorf("Constructing sentence has errors: %v", b.Diag.GetErrors())
 	}
@@ -29,17 +32,20 @@ func L8E1() (string, error) {
 	return sentence, nil
 }
 
-// L8E2: 富士山は高いです。
-func L8E2() (string, error) {
+// L10E2: 机の上に写真があります。
+func L10E2() (string, error) {
 	b := builder.NewBuilder()
-	b.Vocab.AddNoun("富士山")
-	b.Vocab.AddAdjective("高い")
+	b.Vocab.AddNoun("机")
+	b.Vocab.AddNoun("上")
+	b.Vocab.AddNoun("写真")
+	b.Vocab.AddVerb("ある", "ある")
 	if b.Vocab.GetError() != nil {
 		return "", fmt.Errorf("Adding vocabulary has errors: %v", b.Vocab.GetError())
 	}
 
-	b.Append("富士山").Mark(particle.Topic)
-	b.Append("高い").Politely()
+	b.Append("机").Attributing("上").As(casekind.Location)
+	b.Append("写真").As(casekind.Subject)
+	b.Append("ある").Politely()
 	if b.Diag.HasErrors() {
 		return "", fmt.Errorf("Constructing sentence has errors: %v", b.Diag.GetErrors())
 	}
@@ -51,18 +57,19 @@ func L8E2() (string, error) {
 	return sentence, nil
 }
 
-// L8E3: 櫻はきれいな花です。
-func L8E3() (string, error) {
+// L10E3: 家族はニューヨークにいます。
+func L10E3() (string, error) {
 	b := builder.NewBuilder()
-	b.Vocab.AddNoun("櫻")
-	b.Vocab.AddAdjNoun("きれい")
-	b.Vocab.AddNoun("花")
+	b.Vocab.AddNoun("家族")
+	b.Vocab.AddNoun("ニューヨーク")
+	b.Vocab.AddVerb("いる", "いる")
 	if b.Vocab.GetError() != nil {
 		return "", fmt.Errorf("Adding vocabulary has errors: %v", b.Vocab.GetError())
 	}
 
-	b.Append("櫻").Mark(particle.Topic)
-	b.Append("きれい").Attributing("花").Asserted()
+	b.Append("家族").Mark(particle.Topic)
+	b.Append("ニューヨーク").As(casekind.Location)
+	b.Append("いる").Politely()
 	if b.Diag.HasErrors() {
 		return "", fmt.Errorf("Constructing sentence has errors: %v", b.Diag.GetErrors())
 	}
@@ -74,18 +81,19 @@ func L8E3() (string, error) {
 	return sentence, nil
 }
 
-//L8E4: 富士山は高い山です。
-func L8E4() (string, error) {
+//L10E4: 東京ディズニーランドは千葉県にあります。
+func L10E4() (string, error) {
 	b := builder.NewBuilder()
-	b.Vocab.AddNoun("富士山")
-	b.Vocab.AddAdjective("高い")
-	b.Vocab.AddNoun("山")
+	b.Vocab.AddNoun("東京ディズニーランド")
+	b.Vocab.AddNoun("千葉県")
+	b.Vocab.AddVerb("ある", "ある")
 	if b.Vocab.GetError() != nil {
 		return "", fmt.Errorf("Adding vocabulary has errors: %v", b.Vocab.GetError())
 	}
 
-	b.Append("富士山").Mark(particle.Topic)
-	b.Append("高い").Attributing("山").Asserted()
+	b.Append("東京ディズニーランド").Mark(particle.Topic)
+	b.Append("千葉県").As(casekind.Location)
+	b.Append("ある").Politely()
 	if b.Diag.HasErrors() {
 		return "", fmt.Errorf("Constructing sentence has errors: %v", b.Diag.GetErrors())
 	}

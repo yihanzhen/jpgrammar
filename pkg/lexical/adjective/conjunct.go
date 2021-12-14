@@ -11,7 +11,6 @@ import (
 
 // OnConjunct implements the Conjunctable interface.
 func (a Adjective) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
-
 	cu := &conjunctor.ConjunctorUpdate{
 		WordKind:        wordkind.Adjective,
 		ConjugationKind: conjugationkind.Unknown,
