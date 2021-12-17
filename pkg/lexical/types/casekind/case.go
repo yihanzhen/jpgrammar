@@ -45,6 +45,12 @@ const (
 
 	// Location is the location of a state. It is marked by the case marker に.
 	Location
+
+	// ComparisonBase is the comparison base when describing the subject. It is marked by the case marker より.
+	ComparisonBase
+
+	// Range is the range of comparison. It is marked by the case marker で.
+	Range
 )
 
 // String implements the Stringer interface.
@@ -74,6 +80,10 @@ func (c CaseKind) String() string {
 		return "subject"
 	case Location:
 		return "location"
+	case ComparisonBase:
+		return "comparison base"
+	case Range:
+		return "range"
 	}
 	return "unknown"
 }

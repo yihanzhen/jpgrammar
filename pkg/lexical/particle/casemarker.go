@@ -68,4 +68,6 @@ var caseMarkerMap map[casekind.CaseKind]CaseMarker = map[casekind.CaseKind]CaseM
 	casekind.IndirectObject: newCaseMarker("に", "indirect object case marker", casekind.IndirectObject),
 	casekind.Subject:        newCaseMarker("が", "subject case marker", casekind.Subject),
 	casekind.Location:       newCaseMarker("に", "location case marker", casekind.Location),
+	casekind.ComparisonBase: newCaseMarker("より", "comparison base case marker", casekind.ComparisonBase),
+	casekind.Range:          newCaseMarker("で", "range case marker", casekind.Range),
 }

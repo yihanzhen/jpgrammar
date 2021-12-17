@@ -23,7 +23,8 @@ var PoliteAssertor = PoliteAssertorType{
 }
 
 func (p PoliteAssertorType) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
-	if conj.GetWordKind() != wordkind.Noun && conj.GetWordKind() != wordkind.AdjNoun && conj.GetWordKind() != wordkind.Adjective {
+	// TODO: handle auxverb た separately.
+	if conj.GetWordKind() != wordkind.Noun && conj.GetWordKind() != wordkind.AdjNoun && conj.GetWordKind() != wordkind.Adjective && conj.GetWordKind() != wordkind.AuxVerb {
 		return nil, fmt.Errorf("PoliteAssertor.OnAppend: cannot conjunct PoliteAssertor to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
 	}
 
@@ -68,6 +69,18 @@ func (p PoliteAssertorType) Negated(conj *conjunctor.Conjunctor) (extender.Exten
 	return ex, nil
 }
 
+func (p PoliteAssertorType) Completed(conj *conjunctor.Conjunctor) (extender.Extender, error) {
+	if err := conj.Update(&conjunctor.ConjunctorUpdate{
+		WordKind:        wordkind.AuxVerb,
+		ConjugationKind: conjugationkind.Volitional,
+		ReplacePrev:     true,
+		Inserts:         []conjunctor.Conjunctable{CompletedAssertor},
+	}); err != nil {
+		return nil, fmt.Errorf("PoliteAssertor.Completed: %v", err)
+	}
+	return VolitionalAssertor, nil
+}
+
 func (p PoliteAssertorType) Volitionally(conj *conjunctor.Conjunctor) (extender.Extender, error) {
 	if err := conj.Update(&conjunctor.ConjunctorUpdate{
 		WordKind:        wordkind.AuxVerb,
@@ -90,7 +103,7 @@ var VolitionalAssertor = VolitionalAssertorType{
 
 func (v VolitionalAssertorType) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
 	if conj.GetWordKind() != wordkind.Noun && conj.GetConjugationKind() != conjugationkind.Unknown {
-		return nil, fmt.Errorf("PoliteAssertor.OnAppend: cannot conjunct PoliteAssertor to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
+		return nil, fmt.Errorf("VolitionalAssertor.OnAppend: cannot conjunct VolitionalAssertor to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
 	}
 
 	return &conjunctor.ConjunctorUpdate{
@@ -102,4 +115,28 @@ func (v VolitionalAssertorType) OnConjunct(conj *conjunctor.Conjunctor) (*conjun
 
 func (p VolitionalAssertorType) OnWrite(words []word.Word, _ ...conjunctor.Conjunctable) ([]word.Word, error) {
 	return append(words, word.MustWord("でしょう", "でしょう")), nil
+}
+
+type CompletedAssertorType struct {
+	extender.UnimplementedExtender
+}
+
+var CompletedAssertor = CompletedAssertorType{
+	UnimplementedExtender: extender.NewUnimplementedExtender("completed assertor"),
+}
+
+func (v CompletedAssertorType) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
+	if conj.GetWordKind() != wordkind.Noun && conj.GetConjugationKind() != conjugationkind.Unknown {
+		return nil, fmt.Errorf("CompletedAssertor.OnAppend: cannot conjunct CompletedAssertor to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
+	}
+
+	return &conjunctor.ConjunctorUpdate{
+		WordKind:        wordkind.AuxVerb,
+		ConjugationKind: conjugationkind.Volitional,
+		Inserts:         []conjunctor.Conjunctable{v},
+	}, nil
+}
+
+func (p CompletedAssertorType) OnWrite(words []word.Word, _ ...conjunctor.Conjunctable) ([]word.Word, error) {
+	return append(words, word.MustWord("でした", "でした")), nil
 }

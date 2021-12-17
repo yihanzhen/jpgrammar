@@ -6,6 +6,7 @@ import (
 	"github.com/yihanzhen/jpgrammar/pkg/builder/conjunctor"
 	"github.com/yihanzhen/jpgrammar/pkg/builder/extender"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/auxverb/assertor"
+	"github.com/yihanzhen/jpgrammar/pkg/lexical/auxverb/completor"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/auxverb/negator"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/conjugation"
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/noun"
@@ -36,10 +37,20 @@ func (adj Adjective) Attributing(conj *conjunctor.Conjunctor, c conjunctor.Conju
 
 // Politely makes the tone of the sentence polite.
 func (adj Adjective) Politely(conj *conjunctor.Conjunctor) (extender.Extender, error) {
-	fmt.Println("here")
 	pa := assertor.PoliteAssertor
 	if err := conj.Conjunct(pa); err != nil {
 		return pa, fmt.Errorf("Adjective.Politely: %v", err)
 	}
 	return pa, nil
+}
+
+// Completed marks that the adjective refers to something in the past.
+func (adj Adjective) Completed(conj *conjunctor.Conjunctor) (extender.Extender, error) {
+	if err := conj.Conjunct(conjugation.NewConjugationWithEuphony(conjugationkind.Conjunctive, CompletedEuphony)); err != nil {
+		return nil, fmt.Errorf("Adjective.Completed: %v", err)
+	}
+	if err := conj.Conjunct(completor.Completor); err != nil {
+		return nil, fmt.Errorf("Adjective.Completed: %v", err)
+	}
+	return completor.Completor, nil
 }

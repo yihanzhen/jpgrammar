@@ -6,6 +6,10 @@ import (
 	"github.com/yihanzhen/jpgrammar/pkg/kana"
 )
 
+type ModifyOption int
+
+const IgnoreConjugateRef ModifyOption = 1
+
 // Append appends a suffix to the Word.
 func (w Word) Append(str string) (Word, error) {
 	var wt, conjRef string
@@ -41,14 +45,24 @@ func (w Word) TrimLastRune() (Word, error) {
 // ChangeLastRune changes the last rune of the Word.
 // It errors if the conjugateRef of the word is unset because
 // there is no need to call this function for a unconjugatable word.
-func (w Word) ChangeLastRune(r rune) (Word, error) {
-	if w.conjugateRef == "" {
+func (w Word) ChangeLastRune(r rune, opts ...ModifyOption) (Word, error) {
+	checkConjRef := true
+	for _, opt := range opts {
+		if opt == IgnoreConjugateRef {
+			checkConjRef = false
+		}
+	}
+	if checkConjRef && w.conjugateRef == "" {
 		return Word{}, fmt.Errorf("Word.ChangeLastRune: conjugateRef is unset")
 	}
 	wa := []rune(w.writing)
 	wt := string(append(wa[0:len(wa)-1], r))
-	ca := []rune(w.conjugateRef)
-	conjRef := string(append(ca[0:len(ca)-1], r))
+
+	var conjRef string
+	if checkConjRef {
+		ca := []rune(w.conjugateRef)
+		conjRef = string(append(ca[0:len(ca)-1], r))
+	}
 	w2, err := NewWord(wt, conjRef)
 	if err != nil {
 		return Word{}, fmt.Errorf("Word.ChangeLastRune: %v", err)

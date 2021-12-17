@@ -8,7 +8,7 @@ import (
 	"github.com/yihanzhen/jpgrammar/pkg/lexical/types/casekind"
 )
 
-// L10E1: 会議室にテーブルが7つあります。
+// L11E1: 会議室にテーブルが7つあります。
 func L11E1() (string, error) {
 	b := builder.NewBuilder()
 	b.Vocab.AddNoun("会議室")
@@ -34,7 +34,7 @@ func L11E1() (string, error) {
 	return sentence, nil
 }
 
-// L10E2: 私は日本に1年います。
+// L11E2: 私は日本に1年います。
 func L11E2() (string, error) {
 	b := builder.NewBuilder()
 	b.Vocab.AddNoun("私")

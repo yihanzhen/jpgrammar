@@ -40,6 +40,12 @@ var Reason = Particle{
 	Extender: extender.NewUnimplementedExtender("reason particle"),
 }
 
+// TODO: have a separate extender method for this.
+var CompleteList = Particle{
+	Word:     word.MustWord("と", ""),
+	Extender: extender.NewUnimplementedExtender("complete list particle"),
+}
+
 func (p Particle) OnConjunct(conj *conjunctor.Conjunctor) (*conjunctor.ConjunctorUpdate, error) {
 	if (conj.GetWordKind() != wordkind.Noun || conj.GetWordKind() != wordkind.Unknown) && conj.GetConjugationKind() != conjugationkind.Unknown {
 		return nil, fmt.Errorf("Particle.OnAppend: cannot conjunct particle to wordkind %v and conjugationkind %v", conj.GetWordKind(), conj.GetConjugationKind())
